@@ -1,0 +1,9 @@
+target/*
+build/target/*
+allure-plugin-server/target/*
+allure-plugin-agent/target/*
+allure-plugin-common/target/*
+*.iml
+.project
+.classpath
+.idea

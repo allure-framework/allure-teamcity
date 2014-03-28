@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
+  <info>
+    <name>allure</name>
+    <display-name>Allure Report Plugin</display-name>
+    <version>@Version@</version>
+    <description>Allure Report Generation Plugin</description>
+    <download-url>http://qatools.ru/</download-url>
+    <email>vania-pooh@yandex-team.ru</email>
+    <vendor>
+      <name>Yandex LLC</name>
+      <url>http://yandex.ru/</url>
+      <!--<logo>Plugin vendor logo URL</logo>-->
+    </vendor>
+  </info>
+  <deployment use-separate-classloader="true" />
+</teamcity-plugin>
