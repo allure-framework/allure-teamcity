@@ -11,7 +11,7 @@
          <outputDirectory>/</outputDirectory>
      </file>
       <file>
-          <source>target/allure-plugin-agent.zip</source>
+          <source>target/allure-teamcity-plugin-agent.zip</source>
           <outputDirectory>agent</outputDirectory>
       </file>      
   </files>
@@ -19,7 +19,7 @@
     <moduleSet>
        <useAllReactorProjects>true</useAllReactorProjects>
        <includes>
-           <include>ru.yandex.qatools.allure:allure-plugin-server</include>
+           <include>ru.yandex.qatools.allure:allure-teamcity-plugin-server</include>
        </includes> 
        <binaries>
            <outputDirectory>server</outputDirectory>
