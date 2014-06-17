@@ -5,6 +5,9 @@ import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.EventDispatcher;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.NotNull;
 import ru.yandex.qatools.allure.report.AllureReportBuilder;
 import ru.yandex.qatools.allure.report.utils.AetherObjectFactory;
@@ -12,6 +15,11 @@ import ru.yandex.qatools.allure.report.utils.DependencyResolver;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+
+import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newRemoteRepository;
+import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newRepositorySystem;
+import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newSession;
 
 public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
@@ -50,17 +58,21 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
         File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
         String resultsMask[] = buildFeature.getParameters().get(Parameters.RESULTS_MASK).split(";");
-        logger.message(String.format("Allure Report: analyse results mask [%s]", Arrays.toString(resultsMask)));
+        logger.message(String.format("Allure Report: analyse results mask %s", Arrays.toString(resultsMask)));
 
         File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsMask);
-        logger.message(String.format("Allure Report: analyse results directories [%s]",
+        logger.message(String.format("Allure Report: analyse results directories %s",
                 Arrays.toString(allureResultDirectoryList)));
 
         File allureReportDirectory = new File(checkoutDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
 
         try {
             String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
-            DependencyResolver resolver = AetherObjectFactory.newResolver();
+            RepositorySystem repositorySystem = newRepositorySystem();
+            RepositorySystemSession session = newSession(repositorySystem,
+                    new File(runner.getWorkingDirectory(), ".m2/repository"));
+            List<RemoteRepository> remotes = Arrays.asList(newRemoteRepository(AetherObjectFactory.MAVEN_CENTRAL_URL));
+            DependencyResolver resolver = new DependencyResolver(repositorySystem, session, remotes);
             AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
 
             logger.message(String.format("Allure Report: process tests results to directory [%s]",
