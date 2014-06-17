@@ -44,7 +44,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
         }
 
         if (BuildFinishedStatus.INTERRUPTED.equals(status)) {
-            logger.message("Build was interrupted. Skipping Allure report generation.");
+            logger.message("Allure Report: Build was interrupted. Skipping Allure report generation.");
             return;
         }
 
@@ -77,14 +77,14 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     }
 
     private AgentBuildFeature getAllureBuildFeature(final AgentRunningBuild runningBuild) {
-        LOGGER.debug("Checking whether Allure build feature is present.");
+        LOGGER.debug("Allure Report: checking whether Allure build feature is present.");
         for (final AgentBuildFeature buildFeature : runningBuild.getBuildFeatures()) {
             if (Parameters.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
                 LOGGER.debug("Allure Report: build feature is present. Will publish Allure artifacts.");
                 return buildFeature;
             }
         }
-        LOGGER.debug("Allure build feature is not present. Will do nothing.");
+        LOGGER.debug("Allure Report: build feature is not present. Will do nothing.");
         return null;
     }
 }
