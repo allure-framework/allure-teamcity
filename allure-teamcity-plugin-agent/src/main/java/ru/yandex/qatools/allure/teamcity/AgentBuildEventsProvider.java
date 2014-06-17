@@ -44,14 +44,14 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
         if (buildFeature != null) {
             if (!BuildFinishedStatus.INTERRUPTED.equals(status)) {
                 final File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
-                final String relativeInputDirectory = buildFeature.getParameters().get(Constants.INPUT_DIRECTORY);
+                final String relativeInputDirectory = buildFeature.getParameters().get(Parameters.RESULTS_MASK);
                 final File inputAllureDirectory = new File(checkoutDirectory, relativeInputDirectory);
-                final File outputAllureDirectory = new File(checkoutDirectory, Constants.RELATIVE_OUTPUT_DIRECTORY);
+                final File outputAllureDirectory = new File(checkoutDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
                 logger.message(
                         "Generating Allure report to " + outputAllureDirectory.getAbsolutePath() + " using data from " + inputAllureDirectory.getAbsolutePath() + "."
                 );
                 try {
-                    if (outputAllureDirectory.exists()){
+                    if (outputAllureDirectory.exists()) {
                         FileUtils.deleteDirectory(outputAllureDirectory);
                     }
                     final AllureReportGenerator generator = new AllureReportGenerator(inputAllureDirectory);
@@ -75,7 +75,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     private AgentBuildFeature getAllureBuildFeature(final AgentRunningBuild runningBuild) {
         LOGGER.debug("Checking whether Allure build feature is present.");
         for (final AgentBuildFeature buildFeature : runningBuild.getBuildFeatures()) {
-            if (Constants.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
+            if (Parameters.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
                 LOGGER.debug("Allure build feature is present. Will publish Allure artifacts.");
                 return buildFeature;
             }
@@ -101,7 +101,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
                         f.mkdir();
                         continue;
                     }
-                    if (f.exists()){
+                    if (f.exists()) {
                         f.delete();
                     }
                     final InputStream inputStream = jar.getInputStream(file);

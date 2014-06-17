@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
 
     <name>Allure TeamCity Plugin</name>
+    <description>Plugin adds support for generate Allure report based on tests results</description>
 
 
     <properties>

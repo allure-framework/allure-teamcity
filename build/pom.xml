@@ -54,6 +54,14 @@
                     <outputFile>${basedir}/target/teamcity-plugin.xml</outputFile>
                     <replacements>
                         <replacement>
+                            <token>@Name@</token>
+                            <value>${parent.name}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@Description@</token>
+                            <value>${parent.description}</value>
+                        </replacement>
+                        <replacement>
                             <token>@Version@</token>
                             <value>snapshot-${maven.build.timestamp}</value>
                         </replacement>
