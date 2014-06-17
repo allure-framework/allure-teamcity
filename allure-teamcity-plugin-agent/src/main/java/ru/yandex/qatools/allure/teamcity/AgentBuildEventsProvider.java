@@ -2,6 +2,7 @@ package ru.yandex.qatools.allure.teamcity;
 
 import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.buildServer.agent.*;
+import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
@@ -10,12 +11,17 @@ import ru.yandex.qatools.allure.report.utils.AetherObjectFactory;
 import ru.yandex.qatools.allure.report.utils.DependencyResolver;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
     private static final Logger LOGGER = Loggers.AGENT;
 
-    public AgentBuildEventsProvider(@NotNull final EventDispatcher<AgentLifeCycleListener> dispatcher) {
+    private final ArtifactsWatcher artifactsWatcher;
+
+    public AgentBuildEventsProvider(@NotNull final EventDispatcher<AgentLifeCycleListener> dispatcher,
+                                    @NotNull final ArtifactsWatcher artifactsWatcher) {
+        this.artifactsWatcher = artifactsWatcher;
         dispatcher.addListener(this);
     }
 
@@ -29,6 +35,8 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     public void runnerFinished(@NotNull BuildRunnerContext runner, @NotNull BuildFinishedStatus status) {
         super.runnerFinished(runner, status);
         BuildProgressLogger logger = runner.getBuild().getBuildLogger();
+
+        logger.message("Allure Report: report processing started");
         AgentRunningBuild runningBuild = runner.getBuild();
         AgentBuildFeature buildFeature = getAllureBuildFeature(runningBuild);
         if (buildFeature == null) {
@@ -42,18 +50,29 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
         File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
         String resultsMask[] = buildFeature.getParameters().get(Parameters.RESULTS_MASK).split(";");
-        String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
+        logger.message(String.format("Allure Report: analyse results mask [%s]", Arrays.toString(resultsMask)));
 
         File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsMask);
+        logger.message(String.format("Allure Report: analyse results directories [%s]",
+                Arrays.toString(allureResultDirectoryList)));
+
         File allureReportDirectory = new File(checkoutDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
 
         try {
+            String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
             DependencyResolver resolver = AetherObjectFactory.newResolver();
             AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
+
+            logger.message(String.format("Allure Report: process tests results to directory [%s]",
+                    allureReportDirectory));
             builder.processResults(allureResultDirectoryList);
+            logger.message(String.format("Allure Report: unpack report face to directory [%s]",
+                    allureReportDirectory));
             builder.unpackFace();
+
+            artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.exception(e);
         }
     }
 
@@ -61,7 +80,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
         LOGGER.debug("Checking whether Allure build feature is present.");
         for (final AgentBuildFeature buildFeature : runningBuild.getBuildFeatures()) {
             if (Parameters.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
-                LOGGER.debug("Allure build feature is present. Will publish Allure artifacts.");
+                LOGGER.debug("Allure Report: build feature is present. Will publish Allure artifacts.");
                 return buildFeature;
             }
         }
