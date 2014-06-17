@@ -5,8 +5,8 @@
         <name>allure-teamcity-plugin</name>
         <version>@Version@</version>
 
-        <display-name>@Name</display-name>
-        <description>@Description</description>
+        <display-name>@Name@</display-name>
+        <description>@Description@</description>
         <download-url>http://qatools.ru/</download-url>
         <email>allure@yandex-team.ru</email>
         <vendor>
