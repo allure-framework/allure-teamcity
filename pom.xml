@@ -19,18 +19,11 @@
     </properties>
 
     <modules>
-        <module>allure-teamcity-plugin-commons</module>
+        <module>allure-teamcity-plugin-common</module>
         <module>allure-teamcity-plugin-server</module>
         <module>allure-teamcity-plugin-agent</module>
         <module>build</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>JetBrains</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </repository>
-    </repositories>
 
     <build>
         <pluginManagement>
@@ -46,4 +39,12 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <repositories>
+        <repository>
+            <id>JetBrains</id>
+            <url>http://repository.jetbrains.com/all</url>
+        </repository>
+    </repositories>
+
 </project>

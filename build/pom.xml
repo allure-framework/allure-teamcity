@@ -55,11 +55,11 @@
                     <replacements>
                         <replacement>
                             <token>@Name@</token>
-                            <value>${parent.name}</value>
+                            <value>${project.parent.name}</value>
                         </replacement>
                         <replacement>
                             <token>@Description@</token>
-                            <value>${parent.description}</value>
+                            <value>${project.parent.description}</value>
                         </replacement>
                         <replacement>
                             <token>@Version@</token>

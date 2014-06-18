@@ -2,10 +2,9 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
-        <name>allure-teamcity-plugin</name>
-        <version>@Version@</version>
-
+        <name>allure</name>
         <display-name>@Name@</display-name>
+        <version>@Version@</version>
         <description>@Description@</description>
         <download-url>http://qatools.ru/</download-url>
         <email>allure@yandex-team.ru</email>

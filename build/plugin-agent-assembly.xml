@@ -15,6 +15,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
+                <include>ru.yandex.qatools.allure:allure-teamcity-plugin-common</include>
                 <include>ru.yandex.qatools.allure:allure-teamcity-plugin-agent</include>
             </includes>
             <binaries>

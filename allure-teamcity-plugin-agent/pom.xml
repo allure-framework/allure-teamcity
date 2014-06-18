@@ -29,19 +29,6 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-report-data</artifactId>
-            <version>${allure-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-report-face</artifactId>
-            <version>${allure-version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>openapi</artifactId>
             <version>7.0.3</version>
@@ -59,6 +46,12 @@
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-report-builder</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
         </dependency>
 
         <dependency>
@@ -85,28 +78,6 @@
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>ru.yandex.qatools.allure</groupId>
-                                    <artifactId>allure-report-face</artifactId>
-                                    <version>${allure-version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}/allure-report-face
-                                    </outputDirectory>
-                                    <type>war</type>
-                                    <excludes>**\/*.jar,**/META-INF/**,**/WEB-INF/**</excludes>
-                                </artifactItem>
-                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>

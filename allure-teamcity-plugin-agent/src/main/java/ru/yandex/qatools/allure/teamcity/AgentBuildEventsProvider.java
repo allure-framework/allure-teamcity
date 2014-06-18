@@ -5,21 +5,12 @@ import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.EventDispatcher;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.NotNull;
 import ru.yandex.qatools.allure.report.AllureReportBuilder;
-import ru.yandex.qatools.allure.report.utils.AetherObjectFactory;
 import ru.yandex.qatools.allure.report.utils.DependencyResolver;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-
-import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newRemoteRepository;
-import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newRepositorySystem;
-import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newSession;
 
 public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
@@ -65,21 +56,26 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
                 Arrays.toString(allureResultDirectoryList)));
 
         File allureReportDirectory = new File(checkoutDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
+        logger.warning("Allure Report: prepare allure report directory");
+        if (allureReportDirectory.exists() && !allureReportDirectory.delete()) {
+            logger.warning("Allure Report: cant clean allure report directory");
+            return;
+        }
 
         try {
             String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
-            RepositorySystem repositorySystem = newRepositorySystem();
-            RepositorySystemSession session = newSession(repositorySystem,
-                    new File(runner.getWorkingDirectory(), ".m2/repository"));
-            List<RemoteRepository> remotes = Arrays.asList(newRemoteRepository(AetherObjectFactory.MAVEN_CENTRAL_URL));
-            DependencyResolver resolver = new DependencyResolver(repositorySystem, session, remotes);
+            File mavenLocalFolder = new File(runner.getBuild().getAgentTempDirectory(), "repository");
+
+            DependencyResolver resolver = DependencyResolverBuilder.buildDependencyResolver(mavenLocalFolder);
             AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
 
             logger.message(String.format("Allure Report: process tests results to directory [%s]",
                     allureReportDirectory));
             builder.processResults(allureResultDirectoryList);
+
             logger.message(String.format("Allure Report: unpack report face to directory [%s]",
                     allureReportDirectory));
+
             builder.unpackFace();
 
             artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());

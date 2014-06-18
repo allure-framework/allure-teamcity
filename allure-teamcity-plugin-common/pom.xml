@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>allure-teamcity-plugin-commons</artifactId>
+    <artifactId>allure-teamcity-plugin-common</artifactId>
     <packaging>jar</packaging>
 
     <name>Allure TeamCity Plugin Commons</name>
