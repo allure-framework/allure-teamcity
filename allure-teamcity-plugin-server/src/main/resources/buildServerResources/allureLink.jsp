@@ -1,4 +1,5 @@
 <%@ include file="/include.jsp" %>
+<%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 <%@ page import="ru.yandex.qatools.allure.teamcity.Parameters" %>
 
 <%

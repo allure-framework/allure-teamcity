@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-teamcity-plugin-commons</artifactId>
+            <artifactId>allure-teamcity-plugin-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -63,7 +63,7 @@
                         </replacement>
                         <replacement>
                             <token>@Version@</token>
-                            <value>snapshot-${maven.build.timestamp}</value>
+                            <value>${project.parent.version}</value>
                         </replacement>
                     </replacements>
                 </configuration>

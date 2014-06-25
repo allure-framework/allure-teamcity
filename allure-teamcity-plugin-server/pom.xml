@@ -30,7 +30,7 @@
 
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-teamcity-plugin-commons</artifactId>
+            <artifactId>allure-teamcity-plugin-common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

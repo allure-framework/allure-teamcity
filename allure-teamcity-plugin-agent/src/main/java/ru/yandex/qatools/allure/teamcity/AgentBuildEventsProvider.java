@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.log.Loggers;
+import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import ru.yandex.qatools.allure.report.AllureReportBuilder;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.util.Arrays;
 
 public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
+
+    public static final String ALLURE_ACTIVITY_NAME = "Allure report generation";
 
     private static final Logger LOGGER = Loggers.AGENT;
 
@@ -33,66 +36,72 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     @Override
     public void runnerFinished(@NotNull BuildRunnerContext runner, @NotNull BuildFinishedStatus status) {
         super.runnerFinished(runner, status);
-        BuildProgressLogger logger = runner.getBuild().getBuildLogger();
-
-        logger.message("Allure Report: report processing started");
-        AgentRunningBuild runningBuild = runner.getBuild();
-        AgentBuildFeature buildFeature = getAllureBuildFeature(runningBuild);
-        if (buildFeature == null) {
-            return;
-        }
-
-        if (BuildFinishedStatus.INTERRUPTED.equals(status)) {
-            logger.message("Allure Report: Build was interrupted. Skipping Allure report generation.");
-            return;
-        }
-
-        File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
-        String resultsMask[] = buildFeature.getParameters().get(Parameters.RESULTS_MASK).split(";");
-        logger.message(String.format("Allure Report: analyse results mask %s", Arrays.toString(resultsMask)));
-
-        File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsMask);
-        logger.message(String.format("Allure Report: analyse results directories %s",
-                Arrays.toString(allureResultDirectoryList)));
-
-        File allureReportDirectory = new File(checkoutDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
-        logger.warning("Allure Report: prepare allure report directory");
-        if (allureReportDirectory.exists() && !allureReportDirectory.delete()) {
-            logger.warning("Allure Report: cant clean allure report directory");
-            return;
-        }
-
         try {
-            String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
-            File mavenLocalFolder = new File(runner.getBuild().getAgentTempDirectory(), "repository");
+            BuildProgressLogger logger = runner.getBuild().getBuildLogger();
+            logger.activityStarted(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
+            AgentRunningBuild runningBuild = runner.getBuild();
+            AgentBuildFeature buildFeature = getAllureBuildFeature(runningBuild);
+            if (buildFeature == null) {
+                return;
+            }
 
-            DependencyResolver resolver = DependencyResolverBuilder.buildDependencyResolver(mavenLocalFolder);
-            AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
+            if (BuildFinishedStatus.INTERRUPTED.equals(status)) {
+                logger.message("Build was interrupted. Skipping Allure report generation.");
+                return;
+            }
 
-            logger.message(String.format("Allure Report: process tests results to directory [%s]",
-                    allureReportDirectory));
-            builder.processResults(allureResultDirectoryList);
+            File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
+            String resultsMask[] = buildFeature.getParameters().get(Parameters.RESULTS_MASK).split(";");
+            logger.message(String.format("analyse results mask %s", Arrays.toString(resultsMask)));
 
-            logger.message(String.format("Allure Report: unpack report face to directory [%s]",
-                    allureReportDirectory));
+            File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsMask);
+            logger.message(String.format("analyse results directories %s",
+                    Arrays.toString(allureResultDirectoryList)));
 
-            builder.unpackFace();
+            File tempDirectory = runner.getBuild().getAgentTempDirectory();
+            File allureReportDirectory = new File(tempDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
+            logger.message(String.format("prepare allure report directory [%s]",
+                    allureReportDirectory.getAbsolutePath()));
 
-            artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
-        } catch (Exception e) {
-            logger.exception(e);
+            try {
+                String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
+                File mavenLocalFolder = new File(runner.getBuild().getAgentTempDirectory(), "repository");
+
+                DependencyResolver resolver = DependencyResolverBuilder.buildDependencyResolver(mavenLocalFolder);
+
+                logger.message(String.format("prepare report generator with version: %s", version));
+                AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
+
+                logger.message(String.format("process tests results to directory [%s]",
+                        allureReportDirectory.getAbsolutePath()));
+                builder.processResults(allureResultDirectoryList);
+
+                logger.message(String.format("unpack report face to directory [%s]",
+                        allureReportDirectory.getAbsolutePath()));
+                builder.unpackFace();
+
+                artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                logger.exception(e);
+            }
+
+            logger.activityFinished(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
+        } catch (Throwable e) {
+            runner.getBuild().getBuildLogger().exception(e);
         }
     }
 
+    private boolean isNeedToGenerateReport(BuildRunnerContext runner, BuildFinishedStatus status) {
+        return true;
+    }
+
     private AgentBuildFeature getAllureBuildFeature(final AgentRunningBuild runningBuild) {
-        LOGGER.debug("Allure Report: checking whether Allure build feature is present.");
         for (final AgentBuildFeature buildFeature : runningBuild.getBuildFeatures()) {
             if (Parameters.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
-                LOGGER.debug("Allure Report: build feature is present. Will publish Allure artifacts.");
                 return buildFeature;
             }
         }
-        LOGGER.debug("Allure Report: build feature is not present. Will do nothing.");
         return null;
     }
 }

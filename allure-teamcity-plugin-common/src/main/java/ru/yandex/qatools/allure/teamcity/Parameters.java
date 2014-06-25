@@ -6,6 +6,7 @@ public class Parameters {
 
     public static final String RESULTS_MASK = "allureTeamCityPlugin.resultsMask";
     public static final String REPORT_VERSION = "allureTeamCityPlugin.reportVersion";
+    public static final String REPORT_BUILD_POLICY = "allureTeamCityPlugin.reportBuildPolicy";
 
     public static final String BUILD_TYPE_ID = "allureTeamCityPlugin.buildTypeId";
     public static final String BUILD_ID = "allureTeamCityPlugin.buildId";
