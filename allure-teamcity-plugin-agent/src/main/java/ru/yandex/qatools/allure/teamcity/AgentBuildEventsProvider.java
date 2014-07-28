@@ -8,7 +8,6 @@ import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import ru.yandex.qatools.allure.report.AllureReportBuilder;
-import ru.yandex.qatools.allure.report.utils.DependencyResolver;
 
 import java.io.File;
 import java.util.Arrays;
@@ -65,20 +64,17 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
             try {
                 String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
-                File mavenLocalFolder = new File(runner.getBuild().getAgentTempDirectory(), "repository");
-
-                DependencyResolver resolver = DependencyResolverBuilder.buildDependencyResolver(mavenLocalFolder);
 
                 logger.message(String.format("prepare report generator with version: %s", version));
-                AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, resolver);
+                AllureReportBuilder builder = new AllureReportBuilder(version);
 
                 logger.message(String.format("process tests results to directory [%s]",
                         allureReportDirectory.getAbsolutePath()));
-                builder.processResults(allureResultDirectoryList);
+                builder.processTestsResults(allureReportDirectory, allureResultDirectoryList);
 
                 logger.message(String.format("unpack report face to directory [%s]",
                         allureReportDirectory.getAbsolutePath()));
-                builder.unpackFace();
+                builder.unpackReportFace(allureReportDirectory);
 
                 artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
             } catch (Exception e) {
@@ -90,10 +86,6 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
         } catch (Throwable e) {
             runner.getBuild().getBuildLogger().exception(e);
         }
-    }
-
-    private boolean isNeedToGenerateReport(BuildRunnerContext runner, BuildFinishedStatus status) {
-        return true;
     }
 
     private AgentBuildFeature getAllureBuildFeature(final AgentRunningBuild runningBuild) {
