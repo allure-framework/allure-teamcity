@@ -6,9 +6,19 @@ package ru.yandex.qatools.allure.teamcity;
  */
 public enum ReportBuildPolicy {
 
-    ALWAYS(),
+    ALWAYS("For all builds"),
 
-    TEST_FAILED(),
+    WITH_PROBLEMS("For build with problems"),
 
-    BUILD_FAILED()
+    FAILED("For failed builds");
+
+    private String title;
+
+    ReportBuildPolicy(String title) {
+        this.title = title;
+    }
+
+    public String title() {
+        return title;
+    }
 }

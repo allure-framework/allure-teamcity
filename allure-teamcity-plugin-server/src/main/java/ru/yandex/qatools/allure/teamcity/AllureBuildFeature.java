@@ -21,7 +21,7 @@ public class AllureBuildFeature extends BuildFeature {
     @NotNull
     @Override
     public String getType() {
-        return Parameters.BUILD_FEATURE_TYPE;
+        return AllureReportConfig.BUILD_FEATURE_TYPE;
     }
 
     @NotNull
@@ -38,28 +38,25 @@ public class AllureBuildFeature extends BuildFeature {
 
     @org.jetbrains.annotations.Nullable
     public Map<String, String> getDefaultParameters() {
-        Map<String, String> defaults = new HashMap<>();
-        defaults.put(Parameters.RESULTS_MASK, "**/allure-results");
-        defaults.put(Parameters.REPORT_VERSION, "1.3.9");
-        defaults.put(Parameters.REPORT_BUILD_POLICY, ReportBuildPolicy.ALWAYS.toString());
-        return defaults;
+        return AllureReportConfig.newDefaultConfig().getParameters();
     }
 
     @NotNull
     @Override
     public String describeParameters(@NotNull Map<String, String> params) {
-        String reportBuildPolicy = params.get(Parameters.REPORT_BUILD_POLICY);
-        String reportVersion = params.get(Parameters.REPORT_VERSION);
-        String resultsMask = params.get(Parameters.RESULTS_MASK);
+        AllureReportConfig config = new AllureReportConfig(params);
+        ReportBuildPolicy reportBuildPolicy = config.getReportBuildPolicy();
+        String reportVersion = config.getReportVersion();
+        String resultsPattern = config.getResultsPattern();
         StringBuilder builder = new StringBuilder();
-        builder.append("<b>Allure results mask:</b> ").
-                append(isNullOrEmpty(resultsMask) ? "not set" : resultsMask).
+        builder.append("<b>Allure results pattern:</b> ").
+                append(isNullOrEmpty(resultsPattern) ? "not set" : resultsPattern).
                 append("<br/>").
                 append("<b>Allure report version:</b> ").
                 append(isNullOrEmpty(reportVersion) ? "latest" : reportVersion).
                 append("<br/>").
                 append("<b>Allure build policy:</b> ").
-                append(ReportBuildPolicy.valueOf(reportBuildPolicy));
+                append(reportBuildPolicy.title());
         return builder.toString();
     }
 }

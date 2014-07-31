@@ -1,10 +1,10 @@
 <%@ include file="/include.jsp" %>
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
-<%@ page import="ru.yandex.qatools.allure.teamcity.Parameters" %>
+<%@ page import="ru.yandex.qatools.allure.teamcity.AllureReportConfig" %>
 
 <%
-    final String buildTypeId = request.getParameter(Parameters.BUILD_TYPE_ID);
-    final String buildNumber = request.getParameter(Parameters.BUILD_ID);
+    final String buildTypeId = request.getParameter(AllureReportConfig.BUILD_TYPE_ID_KEY);
+    final String buildNumber = request.getParameter(AllureReportConfig.BUILD_ID_KEY);
 %>
 <table>
     <tr>

@@ -1,16 +1,18 @@
 package ru.yandex.qatools.allure.teamcity;
 
-import com.intellij.openapi.diagnostic.Logger;
-import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
-import jetbrains.buildServer.log.Loggers;
+import ru.yandex.qatools.allure.report.AllureReportBuilder;
 import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
-import ru.yandex.qatools.allure.report.AllureReportBuilder;
+import jetbrains.buildServer.agent.*;
+import ru.yandex.qatools.allure.report.utils.AetherObjectFactory;
+import ru.yandex.qatools.allure.report.utils.DependencyResolver;
 
 import java.io.File;
 import java.util.Arrays;
+
+import static ru.yandex.qatools.allure.report.utils.AetherObjectFactory.newDependencyResolver;
 
 public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
@@ -33,62 +35,84 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     @Override
     public void runnerFinished(@NotNull BuildRunnerContext runner, @NotNull BuildFinishedStatus status) {
         super.runnerFinished(runner, status);
+        BuildProgressLogger logger = runner.getBuild().getBuildLogger();
+        logger.activityStarted(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
         try {
-            BuildProgressLogger logger = runner.getBuild().getBuildLogger();
-            logger.activityStarted(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
             AgentRunningBuild runningBuild = runner.getBuild();
             AgentBuildFeature buildFeature = getAllureBuildFeature(runningBuild);
             if (buildFeature == null) {
                 return;
             }
 
-            if (BuildFinishedStatus.INTERRUPTED.equals(status)) {
+            AllureReportConfig config = new AllureReportConfig(buildFeature.getParameters());
+            ReportBuildPolicy reportBuildPolicy = config.getReportBuildPolicy();
+
+            if (!isNeedToBuildReport(reportBuildPolicy, status)) {
                 logger.message("Build was interrupted. Skipping Allure report generation.");
                 return;
             }
 
             File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
-            String resultsMask[] = buildFeature.getParameters().get(Parameters.RESULTS_MASK).split(";");
-            logger.message(String.format("analyse results mask %s", Arrays.toString(resultsMask)));
+            String resultsPattern[] = config.getResultsPattern().split(";");
+            logger.message(String.format("analyse results pattern %s", Arrays.toString(resultsPattern)));
 
-            File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsMask);
+            File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsPattern);
             logger.message(String.format("analyse results directories %s",
                     Arrays.toString(allureResultDirectoryList)));
 
             File tempDirectory = runner.getBuild().getAgentTempDirectory();
-            File allureReportDirectory = new File(tempDirectory, Parameters.RELATIVE_OUTPUT_DIRECTORY);
+            File allureReportDirectory = new File(tempDirectory, AllureReportConfig.REPORT_PATH);
             logger.message(String.format("prepare allure report directory [%s]",
                     allureReportDirectory.getAbsolutePath()));
 
-            try {
-                String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
+            String version = config.getReportVersion();
 
-                logger.message(String.format("prepare report generator with version: %s", version));
-                AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory);
+            logger.message(String.format("prepare report generator with version: %s", version));
 
-                logger.message(String.format("process tests results to directory [%s]",
-                        allureReportDirectory.getAbsolutePath()));
-                builder.processResults(allureResultDirectoryList);
+            File repositoriesDirectory = new File(tempDirectory, AllureReportConfig.REPOSITORY_PATH);
+            DependencyResolver dependencyResolver = newDependencyResolver(repositoriesDirectory,
+                    AetherObjectFactory.MAVEN_CENTRAL_URL, AetherObjectFactory.SONATYPE_RELEASES_URL);
+            AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory, dependencyResolver);
 
-                logger.message(String.format("unpack report face to directory [%s]",
-                        allureReportDirectory.getAbsolutePath()));
-                builder.unpackFace();
+            logger.message(String.format("process tests results to directory [%s]",
+                    allureReportDirectory.getAbsolutePath()));
+            builder.processResults(allureResultDirectoryList);
 
-                artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                logger.exception(e);
-            }
+            logger.message(String.format("unpack report face to directory [%s]",
+                    allureReportDirectory.getAbsolutePath()));
+            builder.unpackFace();
 
-            logger.activityFinished(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
+            artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
         } catch (Throwable e) {
             runner.getBuild().getBuildLogger().exception(e);
+        } finally {
+            logger.activityFinished(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
+        }
+    }
+
+    private boolean isNeedToBuildReport(ReportBuildPolicy policy, BuildFinishedStatus status) {
+        switch (policy) {
+            case ALWAYS: {
+                return true;
+            }
+
+            case WITH_PROBLEMS: {
+                return status.equals(BuildFinishedStatus.FINISHED_WITH_PROBLEMS);
+            }
+
+            case FAILED: {
+                return status.equals(BuildFinishedStatus.FINISHED_FAILED);
+            }
+
+            default: {
+                return false;
+            }
         }
     }
 
     private AgentBuildFeature getAllureBuildFeature(final AgentRunningBuild runningBuild) {
         for (final AgentBuildFeature buildFeature : runningBuild.getBuildFeatures()) {
-            if (Parameters.BUILD_FEATURE_TYPE.equals(buildFeature.getType())) {
+            if (AllureReportConfig.BUILD_FEATURE_KEY.equals(buildFeature.getType())) {
                 return buildFeature;
             }
         }
