@@ -16,8 +16,6 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
     public static final String ALLURE_ACTIVITY_NAME = "Allure report generation";
 
-    private static final Logger LOGGER = Loggers.AGENT;
-
     private final ArtifactsWatcher artifactsWatcher;
 
     public AgentBuildEventsProvider(@NotNull final EventDispatcher<AgentLifeCycleListener> dispatcher,
@@ -66,15 +64,15 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
                 String version = buildFeature.getParameters().get(Parameters.REPORT_VERSION);
 
                 logger.message(String.format("prepare report generator with version: %s", version));
-                AllureReportBuilder builder = new AllureReportBuilder(version);
+                AllureReportBuilder builder = new AllureReportBuilder(version, allureReportDirectory);
 
                 logger.message(String.format("process tests results to directory [%s]",
                         allureReportDirectory.getAbsolutePath()));
-                builder.processTestsResults(allureReportDirectory, allureResultDirectoryList);
+                builder.processResults(allureResultDirectoryList);
 
                 logger.message(String.format("unpack report face to directory [%s]",
                         allureReportDirectory.getAbsolutePath()));
-                builder.unpackReportFace(allureReportDirectory);
+                builder.unpackFace();
 
                 artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
             } catch (Exception e) {
