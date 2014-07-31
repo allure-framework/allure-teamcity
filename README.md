@@ -12,3 +12,6 @@ When build is finished you will find **allure-plugin.zip** file in the **target/
 Install the plugin as usually:
  * Copy zip archive to Teamcity **plugins/** directory.
  * Restart Teamcity.
+
+## Using
+See [wiki](https://github.com/allure-framework/allure-core/wiki/Allure-TeamCity-Plugin) for details.
