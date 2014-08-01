@@ -10,7 +10,7 @@
     <td>
         <props:textProperty name="<%=AllureReportConfig.RESULTS_PATTERN_KEY%>" className="longField"/>
         <span class="smallNote">
-            Specify the path to Allure results directories using <a href="https://ant.apache.org/manual/dirtasks.html">Ant glob syntax</a>.
+            Specify the path to Allure results directories using <a target="_blank" href="https://ant.apache.org/manual/dirtasks.html">Ant glob syntax</a>.
             <br/>
             You can specify multiple patterns of files separated by commas.
             <br/>
@@ -23,7 +23,7 @@
     <td>
         <props:textProperty name="<%=AllureReportConfig.REPORT_VERSION_KEY%>" className="longField"/>
         <span class="smallNote">
-            Specify Allure report version using <a href="http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html">Maven version range specification</a>.
+            Specify Allure report version using <a target="_blank" href="http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html">Maven version range specification</a>.
             <br>
             E.g. fixed version: <strong>1.4.0</strong> or all new versions:  <strong>[1.3.0, )</strong>
         </span>
