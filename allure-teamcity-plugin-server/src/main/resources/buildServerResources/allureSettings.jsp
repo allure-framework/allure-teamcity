@@ -6,32 +6,32 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 
 <tr id="<%=AllureReportConfig.RESULTS_PATTERN_KEY%>.container">
-    <th><label for="<%=AllureReportConfig.RESULTS_PATTERN_KEY%>">Allure tests results mask:</label></th>
+    <th><label for="<%=AllureReportConfig.RESULTS_PATTERN_KEY%>">Results Directories:</label></th>
     <td>
         <props:textProperty name="<%=AllureReportConfig.RESULTS_PATTERN_KEY%>" className="longField"/>
         <span class="smallNote">
-            Specify the path to Allure results directories  in the Ant glob syntax.
+            Specify the path to Allure results directories using <a href="https://ant.apache.org/manual/dirtasks.html">Ant glob syntax</a>.
             <br/>
             You can specify multiple patterns of files separated by commas.
             <br/>
-            For example: <q>**/allure-results</q>
+            E.g. <strong>**/allure-results</strong>
         </span>
     </td>
 </tr>
 <tr id="<%=AllureReportConfig.REPORT_VERSION_KEY%>.container">
-    <th><label for="<%=AllureReportConfig.REPORT_VERSION_KEY%>">Allure report version:</label></th>
+    <th><label for="<%=AllureReportConfig.REPORT_VERSION_KEY%>">Report Version:</label></th>
     <td>
         <props:textProperty name="<%=AllureReportConfig.REPORT_VERSION_KEY%>" className="longField"/>
         <span class="smallNote">
-            Specify Allure report version in maven version range specification
+            Specify Allure report version using <a href="http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html">Maven version range specification</a>.
             <br>
-            For example, fixed version: <q>1.4.0</q> or all new versions:  <q>[1.3.0, )</q>
+            E.g. fixed version: <strong>1.4.0</strong> or all new versions:  <strong>[1.3.0, )</strong>
         </span>
     </td>
 </tr>
 
 <tr id="<%=AllureReportConfig.REPORT_BUILD_POLICY_KEY%>.container">
-    <th><label for="<%=AllureReportConfig.REPORT_BUILD_POLICY_KEY%>">Allure report build policy:</label></th>
+    <th><label for="<%=AllureReportConfig.REPORT_BUILD_POLICY_KEY%>">Generate:</label></th>
     <td>
         <div>
             <props:radioButtonProperty name="<%=AllureReportConfig.REPORT_BUILD_POLICY_KEY%>"
