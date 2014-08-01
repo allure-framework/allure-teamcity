@@ -1,4 +1,6 @@
-Allure plugin for Teamcity allows to get Allure report as Teamcity build artifact.
+Allure plugin for Teamcity allows to get [Allure report](https://github.com/allure-framework/allure-core/edit/master/README.md) as Teamcity build artifact.
+
+![image](https://raw.github.com/allure-framework/allure-core/master/allure-dashboard.png)
 
 ## Installation
 
