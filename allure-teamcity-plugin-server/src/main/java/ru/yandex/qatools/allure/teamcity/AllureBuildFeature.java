@@ -27,7 +27,7 @@ public class AllureBuildFeature extends BuildFeature {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Allure report processing";
+        return "Generate Allure Report";
     }
 
     @Nullable
@@ -52,13 +52,13 @@ public class AllureBuildFeature extends BuildFeature {
         String reportVersion = params.get(Parameters.REPORT_VERSION);
         String resultsMask = params.get(Parameters.RESULTS_MASK);
         StringBuilder builder = new StringBuilder();
-        builder.append("<b>Allure results mask:</b> ").
+        builder.append("<b>Allure Results Directories:</b> ").
                 append(isNullOrEmpty(resultsMask) ? "not set" : resultsMask).
                 append("<br/>").
-                append("<b>Allure report version:</b> ").
+                append("<b>Allure Version:</b> ").
                 append(isNullOrEmpty(reportVersion) ? "latest" : reportVersion).
                 append("<br/>").
-                append("<b>Allure build policy:</b> ").
+                append("<b>Build Allure:</b> ").
                 append(ReportBuildPolicy.valueOf(reportBuildPolicy));
         return builder.toString();
     }
