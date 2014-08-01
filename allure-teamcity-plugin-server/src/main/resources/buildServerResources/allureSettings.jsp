@@ -6,31 +6,31 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 
 <tr id="<%=Parameters.RESULTS_MASK%>.container">
-    <th><label for="<%=Parameters.RESULTS_MASK%>">Allure tests results mask:</label></th>
+    <th><label for="<%=Parameters.RESULTS_MASK%>">Allure Results Directories:</label></th>
     <td>
         <props:textProperty name="<%=Parameters.RESULTS_MASK%>" className="longField"/>
         <span class="smallNote">
-            Specify the path to Allure results directories  in the Ant glob syntax.
+            Specify the path to Allure results directories using <a href="https://ant.apache.org/manual/dirtasks.html">Ant glob syntax</a>.
             <br/>
             You can specify multiple patterns of files separated by commas.
             <br/>
-            For example: <q>**/allure-results</q>
+            For example: <strong>**/allure-results</strong>
         </span>
     </td>
 </tr>
 <tr id="<%=Parameters.REPORT_VERSION%>.container">
-    <th><label for="<%=Parameters.REPORT_VERSION%>">Allure report version:</label></th>
+    <th><label for="<%=Parameters.REPORT_VERSION%>">Allure Version:</label></th>
     <td>
         <props:textProperty name="<%=Parameters.REPORT_VERSION%>" className="longField"/>
         <span class="smallNote">
-            Specify Allure report version in maven version range specification
+            Specify Allure report version using <a href="http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html">Maven version range specification</a>.
             <br>
-            For example, fixed version: <q>1.4.0</q> or all new versions:  <q>[1.3.0, )</q>
+            E.g. fixed version: <strong>1.4.0</strong> or versions newer than 1.3.0: <strong>[1.3.0, )</strong>
         </span>
     </td>
 </tr>
 <tr id="<%=Parameters.REPORT_BUILD_POLICY%>.container">
-    <th><label for="<%=Parameters.REPORT_BUILD_POLICY%>">Allure report build policy:</label></th>
+    <th><label for="<%=Parameters.REPORT_BUILD_POLICY%>">Build Allure:</label></th>
     <td>
         <div>
             <props:radioButtonProperty name="<%=Parameters.REPORT_BUILD_POLICY%>"
@@ -38,7 +38,7 @@
                                        id="<%=Parameters.REPORT_BUILD_POLICY + ReportBuildPolicy.ALWAYS.toString()%>"
                                        checked="<%=propertiesBean.getEncryptedPropertyValue(Parameters.REPORT_BUILD_POLICY).equals(ReportBuildPolicy.ALWAYS.toString())%>"/>
             <label for="<%=Parameters.REPORT_BUILD_POLICY + ReportBuildPolicy.ALWAYS.toString()%>">
-                For all build
+                For all builds
             </label>
         </div>
 
