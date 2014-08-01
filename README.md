@@ -1,17 +1,22 @@
-# Allure Report Teamcity Plugin
-This repository contains plugin for Teamcity CI server which allows you to generate Allure Report as build artifact.
+Allure plugin for Teamcity allows to get [Allure report](https://github.com/allure-framework/allure-core/edit/master/README.md) as Teamcity build artifact.
 
-## Building
-In order to build the plugin from source you need to install Apache Maven and any JDK 1.7. When done run the following command from the sources directory:
-```
-$ mvn clean package
-```
-When build is finished you will find **allure-plugin.zip** file in the **target/** directory.
+![image](https://raw.github.com/allure-framework/allure-core/master/allure-dashboard.png)
 
-## Installing
-Install the plugin as usually:
- * Copy zip archive to Teamcity **plugins/** directory.
- * Restart Teamcity.
+## Installation
 
-## Using
-See [wiki](https://github.com/allure-framework/allure-core/wiki/Allure-TeamCity-Plugin) for details.
+ * [Download](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) latest version of plugin.
+ * Shutdown the TeamCity server.
+ * Copy the zip archive with the plugin into the [TeamCity Data Directory](http://confluence.jetbrains.com/display/TCD8/TeamCity+Data+Directory)/plugins directory.
+ * Start the TeamCity server: the plugin files will be unpacked and processed automatically. The plugin will be available in the Plugins List in the Administration area.
+
+## Configuration
+
+ * Open "Build Configuration settings" > "Build Features"
+ * Click "Add build feature" > "Allure Report Generation"
+
+## Usage
+
+When the build is done you will get Allure Report as part of build artifacts - simply open **index.html**
+
+## Contact us
+Mailing list: [allure@yandex-team.ru](mailto:allure@yandex-team.ru)
