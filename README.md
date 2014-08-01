@@ -16,4 +16,7 @@ Allure plugin for Teamcity allows to get [Allure report](https://github.com/allu
 
 ## Usage
 
-When the build is done you will get Allure Report as part of build artifacts - simply open **index.html**:
+When the build is done you will get Allure Report as part of build artifacts - simply open **index.html**
+
+## Contact us
+Mailing list: [allure@yandex-team.ru](mailto:allure@yandex-team.ru)
