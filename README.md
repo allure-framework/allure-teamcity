@@ -1,4 +1,4 @@
-# Allure Jenkins Plugin
+# Allure TeamCity Plugin
 
 Allure plugin for Teamcity allows to get [Allure report](http://allure.qatools.ru) as Teamcity build artifact.
 
