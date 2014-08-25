@@ -1,20 +1,21 @@
 # Allure TeamCity Plugin
 
-Allure plugin for Teamcity allows to get [Allure report](http://allure.qatools.ru) as Teamcity build artifact.
+This repository contains Allure plugin for [Teamcity](http://www.jetbrains.com/teamcity/) allowing to generate [Allure report](http://allure.qatools.ru) from [existing Allure XML files](https://github.com/allure-framework/allure-core/wiki#gathering-information-about-tests) as Teamcity build artifact.
 
 ![image](https://raw.github.com/allure-framework/allure-core/master/allure-dashboard.png)
 
 ## Installation
 
- * [Download](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) the latest version of plugin.
- * Shutdown the TeamCity server.
- * Copy the zip archive with the plugin into the [TeamCity Data Directory](http://confluence.jetbrains.com/display/TCD8/TeamCity+Data+Directory)/plugins directory.
- * Start the TeamCity server: the plugin files will be unpacked and processed automatically. The plugin will be available in the Plugins List in the Administration area.
+ 1. [Download](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) the latest version of plugin.
+ 2. Shutdown the TeamCity server.
+ 3. Copy the zip archive with the plugin into the [TeamCity Data Directory](http://confluence.jetbrains.com/display/TCD8/TeamCity+Data+Directory)/plugins directory.
+ 4. Start TeamCity server: all plugin files will be unpacked and processed automatically. Plugin will be available in the Plugins List in the Administration area.
 
 ## Configuration
 
- * Open "Build Configuration settings" > "Build Features"
- * Click "Add build feature" > "Allure Report Generation"
+ 1. Open **Build Configuration Settings**
+ 2. Ensure that your build [generates Allure XML files](https://github.com/allure-framework/allure-core/wiki#gathering-information-about-tests)
+ 3. Clock **Build Features > Add Build Feature > Allure Report Generation**
 
 ![configuration](https://raw.githubusercontent.com/allure-framework/allure-teamcity-plugin/master/img/allure-configuration.png)
 
