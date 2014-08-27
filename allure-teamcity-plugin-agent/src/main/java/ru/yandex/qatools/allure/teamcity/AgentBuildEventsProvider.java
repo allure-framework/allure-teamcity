@@ -59,6 +59,19 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
             File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsPattern);
             logger.message(String.format("analyse results directories %s",
                     Arrays.toString(allureResultDirectoryList)));
+            
+            if ( 
+                    (allureResultDirectoryList.length == 0) 
+                    && (resultsPattern.length == 1)
+                    && (resultsPattern[0] != null)
+            ){
+                String absolutePath = resultsPattern[0];
+                File absolutePathFile = new File(absolutePath);
+                if (absolutePathFile.exists()){
+                    logger.message(String.format("using results pattern %s as absolute path", absolutePath));
+                    allureResultDirectoryList = new File[]{absolutePathFile};
+                }
+            }
 
             File tempDirectory = runner.getBuild().getAgentTempDirectory();
             File allureReportDirectory = new File(tempDirectory, AllureReportConfig.REPORT_PATH);
