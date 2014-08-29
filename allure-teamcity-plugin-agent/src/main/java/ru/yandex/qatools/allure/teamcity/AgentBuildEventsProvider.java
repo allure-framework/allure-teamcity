@@ -33,13 +33,12 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
     }
 
     @Override
-    public void runnerFinished(@NotNull BuildRunnerContext runner, @NotNull BuildFinishedStatus status) {
-        super.runnerFinished(runner, status);
-        BuildProgressLogger logger = runner.getBuild().getBuildLogger();
+    public void beforeBuildFinish(@NotNull AgentRunningBuild build, @NotNull BuildFinishedStatus buildStatus) {
+        super.beforeBuildFinish(build, buildStatus);
+        BuildProgressLogger logger = build.getBuildLogger();
         logger.activityStarted(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
         try {
-            AgentRunningBuild runningBuild = runner.getBuild();
-            AgentBuildFeature buildFeature = getAllureBuildFeature(runningBuild);
+            AgentBuildFeature buildFeature = getAllureBuildFeature(build);
             if (buildFeature == null) {
                 return;
             }
@@ -47,12 +46,12 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
             AllureReportConfig config = new AllureReportConfig(buildFeature.getParameters());
             ReportBuildPolicy reportBuildPolicy = config.getReportBuildPolicy();
 
-            if (!isNeedToBuildReport(reportBuildPolicy, status)) {
+            if (!isNeedToBuildReport(reportBuildPolicy, buildStatus)) {
                 logger.message("Build was interrupted. Skipping Allure report generation.");
                 return;
             }
 
-            File checkoutDirectory = runner.getBuild().getCheckoutDirectory();
+            File checkoutDirectory = build.getCheckoutDirectory();
             String resultsPattern[] = config.getResultsPattern().split(";");
             logger.message(String.format("analyse results pattern %s", Arrays.toString(resultsPattern)));
 
@@ -60,7 +59,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
             logger.message(String.format("analyse results directories %s",
                     Arrays.toString(allureResultDirectoryList)));
 
-            File tempDirectory = runner.getBuild().getAgentTempDirectory();
+            File tempDirectory = build.getAgentTempDirectory();
             File allureReportDirectory = new File(tempDirectory, AllureReportConfig.REPORT_PATH);
             logger.message(String.format("prepare allure report directory [%s]",
                     allureReportDirectory.getAbsolutePath()));
@@ -84,7 +83,7 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
 
             artifactsWatcher.addNewArtifactsPath(allureReportDirectory.getAbsolutePath());
         } catch (Throwable e) {
-            runner.getBuild().getBuildLogger().exception(e);
+            build.getBuildLogger().exception(e);
         } finally {
             logger.activityFinished(ALLURE_ACTIVITY_NAME, DefaultMessagesInfo.BLOCK_TYPE_BUILD_STEP);
         }
