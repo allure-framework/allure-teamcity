@@ -17,7 +17,7 @@ This repository contains Allure plugin for [Teamcity](http://www.jetbrains.com/t
 
  1. Open **Build Configuration Settings**
  2. Ensure that your build [generates Allure XML files](https://github.com/allure-framework/allure-core/wiki#gathering-information-about-tests)
- 3. Clock **Build Features > Add Build Feature > Allure Report Generation**
+ 3. Click **Build Features > Add Build Feature > Allure Report Generation**
 
 ![configuration](https://raw.githubusercontent.com/allure-framework/allure-teamcity-plugin/master/img/allure-configuration.png)
 
