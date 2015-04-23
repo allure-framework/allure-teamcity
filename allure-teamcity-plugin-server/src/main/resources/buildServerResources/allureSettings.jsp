@@ -12,8 +12,6 @@
         <span class="smallNote">
             Specify the path to Allure results directories using <a target="_blank" href="https://ant.apache.org/manual/dirtasks.html">Ant glob syntax</a>.
             <br/>
-            You can specify multiple patterns of files separated by commas.
-            <br/>
             E.g. <strong>**/allure-results</strong>
         </span>
     </td>

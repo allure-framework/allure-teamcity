@@ -14,10 +14,14 @@ public class FileUtils {
 
     }
 
-    public static File[] findFilesByMask(File file, String[] mask) {
+    public static File[] findFilesByGlob(File file, String glob) {
+        if (new File(glob).isAbsolute()) {
+            return new File[]{new File(glob)};
+        }
+
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(file);
-        scanner.setIncludes(mask);
+        scanner.setIncludes(new String[]{glob});
         scanner.setCaseSensitive(false);
         scanner.scan();
 

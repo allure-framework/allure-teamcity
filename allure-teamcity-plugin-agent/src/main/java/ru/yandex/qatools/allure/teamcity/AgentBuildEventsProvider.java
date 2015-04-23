@@ -52,10 +52,10 @@ public class AgentBuildEventsProvider extends AgentLifeCycleAdapter {
             }
 
             File checkoutDirectory = build.getCheckoutDirectory();
-            String resultsPattern[] = config.getResultsPattern().split(";");
-            logger.message(String.format("analyse results pattern %s", Arrays.toString(resultsPattern)));
+            String resultsPattern = config.getResultsPattern();
+            logger.message(String.format("analyse results pattern %s", resultsPattern));
 
-            File[] allureResultDirectoryList = FileUtils.findFilesByMask(checkoutDirectory, resultsPattern);
+            File[] allureResultDirectoryList = FileUtils.findFilesByGlob(checkoutDirectory, resultsPattern);
             logger.message(String.format("analyse results directories %s",
                     Arrays.toString(allureResultDirectoryList)));
 
