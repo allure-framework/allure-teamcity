@@ -27,6 +27,11 @@
             <name>Ivan Krutov</name>
             <email>vania-pooh@yandex-team.ru</email>
         </developer>
+        <developer>
+            <id>charlie</id>
+            <name>Baev Dmitry</name>
+            <email>charlie@yandex-team.ru</email>
+        </developer>
     </developers>
 
     <licenses>
@@ -53,7 +58,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <teamcity-version>8.0</teamcity-version>
-        <allure-version>1.3.9</allure-version>
+        <allure-version>1.4.15</allure-version>
         <compiler-version>1.7</compiler-version>
     </properties>
 
@@ -83,6 +88,16 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jetbrains.teamcity</groupId>
+                <artifactId>teamcity-sdk-maven-plugin</artifactId>
+                <version>0.2</version>
+                <configuration>
+                    <teamcityDir>.teamcity/${teamcity-version}</teamcityDir>
+                    <agentDebugStr>-Xmx2048m -XX:MaxPermSize=512m</agentDebugStr>
+                    <!-- -agentpath:/Applications/jprofiler8/bin/macos/libjprofilerti.jnilib=nowait,port=8849-->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -93,4 +108,10 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>JetBrains</id>
+            <url>http://repository.jetbrains.com/all</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
