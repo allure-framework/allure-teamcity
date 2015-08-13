@@ -1,18 +1,21 @@
 package ru.yandex.qatools.allure;
 
-import com.intellij.openapi.util.SystemInfo;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
+import jetbrains.buildServer.agent.runner.JavaCommandLineBuilder;
+import jetbrains.buildServer.agent.runner.JavaRunnerUtil;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
+import jetbrains.buildServer.runner.JavaRunnerConstants;
 import org.jetbrains.annotations.NotNull;
+import ru.yandex.qatools.commons.model.Environment;
+import ru.yandex.qatools.commons.model.Parameter;
 
+import javax.xml.bind.JAXB;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 import static ru.yandex.qatools.allure.AllureConstants.ISSUE_TRACKER_PATTERN;
 import static ru.yandex.qatools.allure.AllureConstants.REPORT_VERSION;
@@ -32,6 +35,7 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     public static final String ALLURE_REPORT = "allure-report";
 
     public static final String TOOL_NAME = "allure";
+    public static final String MAIN_CLASS = "ru.yandex.qatools.allure.AllureMain";
 
     private final ArtifactsWatcher artifactsWatcher;
 
@@ -55,27 +59,50 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String issuesPattern = getRunnerParameter(ISSUE_TRACKER_PATTERN);
         String tmsPattern = getRunnerParameter(TMS_PATTERN);
 
-        String javaExecutable = getJavaExecutable();
-        getLogger().message("Java executable found: " + javaExecutable);
-
         String bundle = Paths.get(getToolPath(TOOL_NAME), BUNDLE).toAbsolutePath().toString();
         getLogger().message("Allure bundle found: " + bundle);
 
-        List<String> args = Arrays.asList(
-                createSystemPropertyArgument(ISSUE_TRACKER_PATTERN, issuesPattern),
-                createSystemPropertyArgument(TMS_PATTERN, tmsPattern),
-                "-jar",
-                bundle,
-                resolveResultsDirectory(relativeResultsDirectory),
-                getReportDirectory()
-        );
+        String resultsDirectory = resolveResultsDirectory(relativeResultsDirectory);
+        writeEnvironment(resultsDirectory);
 
-        return createProgramCommandline(javaExecutable, args);
+        JavaCommandLineBuilder cliBuilder = new JavaCommandLineBuilder();
+        cliBuilder.setJavaHome(getRunnerParameters().get(JavaRunnerConstants.TARGET_JDK_HOME));
+        cliBuilder.setBaseDir(getCheckoutDirectory().getAbsolutePath());
+        cliBuilder.setWorkingDir(getCheckoutDirectory().getAbsolutePath());
+        cliBuilder.setJvmArgs(JavaRunnerUtil.extractJvmArgs(getRunnerParameters()));
+        cliBuilder.setMainClass(MAIN_CLASS);
+        cliBuilder.setClassPath(bundle);
+
+        cliBuilder.addSystemProperty(ISSUE_TRACKER_PATTERN, issuesPattern);
+        cliBuilder.addSystemProperty(TMS_PATTERN, tmsPattern);
+        cliBuilder.addProgramArg(resultsDirectory);
+        cliBuilder.addProgramArg(getReportDirectory());
+
+        return cliBuilder.build();
     }
 
     @Override
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
         artifactsWatcher.addNewArtifactsPath(getReportDirectory());
+    }
+
+    protected void writeEnvironment(String reportDirectory) throws RunBuildException {
+        Environment environment = getEnvironment();
+        Path env = Paths.get(reportDirectory).resolve("environment.xml");
+        JAXB.marshal(environment, env.toFile());
+    }
+
+    protected Environment getEnvironment() {
+        String projectName = getBuild().getProjectName();
+        String buildNumber = getBuild().getBuildNumber();
+        Environment environment = new Environment()
+                .withId(buildNumber)
+                .withName(projectName);
+        for (String key : getConfigParameters().keySet()) {
+            String value = getConfigParameters().get(key);
+            environment.withParameter(new Parameter().withName(key).withKey(key).withValue(value));
+        }
+        return environment;
     }
 
     protected String resolveResultsDirectory(String resultsDirectory) throws RunBuildException {
@@ -97,24 +124,9 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return resolved.toAbsolutePath().toString();
     }
 
-    protected String createSystemPropertyArgument(String key, String value) {
-        return String.format("-D%s=%s", key, value);
-    }
-
     protected String getRunnerParameter(String key) {
         String value = getRunnerParameters().get(key);
         getLogger().message(String.format("%s: %s", key, value));
         return value;
-    }
-
-    protected String getJavaExecutable() throws RunBuildException {
-        if (!getEnvironmentVariables().containsKey(JAVA_HOME)) {
-            throw new RunBuildException("Could not find java installation: " +
-                    "environment variable " + JAVA_HOME + " is not installed.");
-        }
-        String javaHome = getEnvironmentVariables().get(JAVA_HOME);
-
-        String javaExecutableName = SystemInfo.isWindows ? "java.exe" : "java";
-        return Paths.get(javaHome, "bin", javaExecutableName).toAbsolutePath().toString();
     }
 }

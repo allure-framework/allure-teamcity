@@ -2,6 +2,8 @@
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+YO nigga
+
 <div class="parameter">
     Result directory:<strong><props:displayValue name="<%=AllureConstants.RESULTS_DIRECTORY%>" emptyValue="none"/></strong>
 </div>

@@ -47,6 +47,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- For environment bean -->
+        <dependency>
+            <groupId>ru.yandex.qatools.allure</groupId>
+            <artifactId>allure-model</artifactId>
+            <version>1.4.16</version>
+        </dependency>
+
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-report-builder</artifactId>
