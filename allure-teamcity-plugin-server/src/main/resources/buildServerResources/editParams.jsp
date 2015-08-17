@@ -21,7 +21,9 @@
     <td>
         <props:textProperty name="<%=AllureConstants.REPORT_VERSION%>" className="longField" disabled="true"/>
         <span class="smallNote">
-            You can't specify the report version in this version of teamcity plugin.
+            The version of generated report depends on version of Allure commandline tool. For more
+            information you can see <a href="https://github.com/allure-framework/allure-teamcity-plugin">this wiki
+            page.</a>
         </span>
     </td>
 </tr>

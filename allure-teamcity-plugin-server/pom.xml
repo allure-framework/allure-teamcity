@@ -13,13 +13,20 @@
     <name>Allure TeamCity Plugin Server</name>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.teamcity</groupId>
             <artifactId>server-api</artifactId>
             <version>${teamcity-version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- api was opened since 9.0, so when plugin was updated we should use
+         ${teamcity-version} property instead-->
         <dependency>
             <groupId>org.jetbrains.teamcity</groupId>
             <artifactId>server-web-api</artifactId>
@@ -29,10 +36,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jetbrains.teamcity</groupId>
-            <artifactId>tests-support</artifactId>
-            <version>${teamcity-version}</version>
-            <scope>test</scope>
+            <groupId>com.intellij</groupId>
+            <artifactId>openapi</artifactId>
+            <version>7.0.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -43,10 +50,10 @@
         </dependency>
 
         <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>openapi</artifactId>
-            <version>7.0.3</version>
-            <scope>provided</scope>
+            <groupId>org.jetbrains.teamcity</groupId>
+            <artifactId>tests-support</artifactId>
+            <version>${teamcity-version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

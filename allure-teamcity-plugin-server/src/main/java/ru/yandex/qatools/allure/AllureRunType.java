@@ -88,8 +88,8 @@ public class AllureRunType extends RunType {
     @Nullable
     @Override
     public Map<String, String> getDefaultRunnerProperties() {
-        HashMap<String, String> defaults = new HashMap<>();
-        defaults.put(AllureConstants.REPORT_VERSION, "1.4.16");
+        Map<String, String> defaults = new HashMap<>();
+        defaults.put(AllureConstants.REPORT_VERSION, "UNKNOWN");
         defaults.put(AllureConstants.ISSUE_TRACKER_PATTERN, "%s");
         defaults.put(AllureConstants.TMS_PATTERN, "%s");
         defaults.put(AllureConstants.RESULTS_DIRECTORY, "allure-results/");
