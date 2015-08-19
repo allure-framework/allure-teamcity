@@ -8,9 +8,6 @@ package ru.yandex.qatools.allure;
  */
 public final class AllureConstants {
 
-    AllureConstants() {
-    }
-
     public static final String RUN_TYPE = "allureReportGeneratorRunner";
 
     public static final String REPORT_VERSION = "allure.version";
@@ -18,6 +15,9 @@ public final class AllureConstants {
     public static final String RESULTS_DIRECTORY = "allure.result.directory";
 
     public static final String ISSUE_TRACKER_PATTERN = "allure.issues.tracker.pattern";
+
     public static final String TMS_PATTERN = "allure.tests.management.pattern";
 
+    AllureConstants() {
+    }
 }

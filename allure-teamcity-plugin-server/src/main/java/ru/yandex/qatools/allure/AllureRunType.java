@@ -6,16 +6,8 @@ import jetbrains.buildServer.serverSide.RunTypeRegistry;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +18,9 @@ public class AllureRunType extends RunType {
 
     private final PluginDescriptor pluginDescriptor;
 
+    /**
+     * {@inheritDoc}
+     */
     public AllureRunType(
             @NotNull final RunTypeRegistry registry,
             @NotNull final PluginDescriptor descriptor) {
@@ -33,60 +28,71 @@ public class AllureRunType extends RunType {
         registry.registerRunType(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NotNull
     @Override
     public String getType() {
         return AllureConstants.RUN_TYPE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NotNull
     @Override
     public String getDisplayName() {
         return "Allure Report";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NotNull
     @Override
     public String getDescription() {
         return "Generate the Allure report for your build.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public PropertiesProcessor getRunnerPropertiesProcessor() {
         return new AllurePropertiesProcessor();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public String getEditRunnerParamsJspFilePath() {
         return pluginDescriptor.getPluginResourcesPath("editParams.jsp");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public String getViewRunnerParamsJspFilePath() {
         return pluginDescriptor.getPluginResourcesPath("viewParams.jsp");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public Map<String, String> getDefaultRunnerProperties() {
-        return new HashMap<>();
-    }
-
-    public String getPluginsDirectory() {
-        return pluginDescriptor.getPluginRoot().getParent();
-    }
-
-    public List<String> installedVersions() throws IOException {
-        List<String> result = new ArrayList<>();
-        Path path = Paths.get(pluginDescriptor.getPluginRoot().getParent(), ".tools", "allure");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-            for (Path child : stream) {
-                result.add(child.getFileName().toString());
-            }
-        }
-        return result;
+        Map<String, String> defaults = new HashMap<>();
+        defaults.put(AllureConstants.REPORT_VERSION, "UNKNOWN");
+        defaults.put(AllureConstants.ISSUE_TRACKER_PATTERN, "%s");
+        defaults.put(AllureConstants.TMS_PATTERN, "%s");
+        defaults.put(AllureConstants.RESULTS_DIRECTORY, "allure-results/");
+        return defaults;
     }
 }

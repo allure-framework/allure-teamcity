@@ -25,14 +25,20 @@ public class AllureToolProvider implements ToolProvider {
         this.bundledRegistry = bundledRegistry;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean supports(@NotNull final String toolName) {
         return ALLURE.equals(toolName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NotNull
     @Override
-    public String getPath(@NotNull final String toolName) throws ToolCannotBeFoundException {
+    public String getPath(@NotNull final String toolName) {
         BundledTool tool = bundledRegistry.findTool(toolName);
         if (tool == null) {
             throw new ToolCannotBeFoundException("Could not locate Allure installation.");
@@ -40,12 +46,14 @@ public class AllureToolProvider implements ToolProvider {
         return tool.getRootPath().getPath();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NotNull
     @Override
     public String getPath(@NotNull final String toolName,
                           @NotNull final AgentRunningBuild build,
-                          @NotNull final BuildRunnerContext runner)
-            throws ToolCannotBeFoundException {
+                          @NotNull final BuildRunnerContext runner) {
         return getPath(toolName);
     }
 }

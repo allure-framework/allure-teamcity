@@ -8,7 +8,7 @@
 <tr id="<%=AllureConstants.RESULTS_DIRECTORY%>.container">
     <th><label for="<%=AllureConstants.RESULTS_DIRECTORY%>">Allure result directory:</label></th>
     <td>
-        <props:textProperty name="<%=AllureConstants.RESULTS_DIRECTORY%>" className="longField" value="allure-results/"/>
+        <props:textProperty name="<%=AllureConstants.RESULTS_DIRECTORY%>" className="longField"/>
         <span class="smallNote">
             Specify the directory with allure results relative from build directory. An example
             <strong>allure-results/</strong>
@@ -19,9 +19,11 @@
 <tr id="<%=AllureConstants.REPORT_VERSION%>.container">
     <th><label for="<%=AllureConstants.REPORT_VERSION%>">Report version:</label></th>
     <td>
-        <props:textProperty name="<%=AllureConstants.REPORT_VERSION%>" className="longField" value="1.4.16" disabled="true"/>
+        <props:textProperty name="<%=AllureConstants.REPORT_VERSION%>" className="longField" disabled="true"/>
         <span class="smallNote">
-            You can't specify the report version in this version of teamcity plugin.
+            The version of generated report depends on version of Allure commandline tool. For more
+            information you can see <a href="https://github.com/allure-framework/allure-teamcity-plugin">this wiki
+            page.</a>
         </span>
     </td>
 </tr>
@@ -29,7 +31,7 @@
 <tr id="<%=AllureConstants.ISSUE_TRACKER_PATTERN%>.container">
     <th><label for="<%=AllureConstants.ISSUE_TRACKER_PATTERN%>">Issue tracker pattern:</label></th>
     <td>
-        <props:textProperty name="<%=AllureConstants.ISSUE_TRACKER_PATTERN%>" className="longField" value="%s"/>
+        <props:textProperty name="<%=AllureConstants.ISSUE_TRACKER_PATTERN%>" className="longField"/>
         <span class="smallNote">
             Specify the issue tracker pattern. E.g. <strong>http://bugtracker.yourcompany.com/issues/%s</strong>
             For more information you can see <a href="https://github.com/allure-framework/allure-core/wiki/Issues">this wiki
@@ -41,7 +43,7 @@
 <tr id="<%=AllureConstants.TMS_PATTERN%>.container">
     <th><label for="<%=AllureConstants.TMS_PATTERN%>">Test management pattern:</label></th>
     <td>
-        <props:textProperty name="<%=AllureConstants.TMS_PATTERN%>" className="longField" value="%s"/>
+        <props:textProperty name="<%=AllureConstants.TMS_PATTERN%>" className="longField"/>
         <span class="smallNote">
             Specify the test management system pattern. E.g. <strong>http://tms.yourcompany.com/tests/%s</strong>
             For more information you can see <a href="https://github.com/allure-framework/allure-core/wiki/Test-Case-ID">this
@@ -49,3 +51,5 @@
         </span>
     </td>
 </tr>
+
+<props:javaSettings/>
