@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AllureToolProvider implements ToolProvider {
 
-    public static final String ALLURE = "allure";
-
     private final BundledToolsRegistry bundledRegistry;
 
     public AllureToolProvider(@NotNull ToolProvidersRegistry toolProvidersRegistry,
@@ -30,7 +28,7 @@ public class AllureToolProvider implements ToolProvider {
      */
     @Override
     public boolean supports(@NotNull final String toolName) {
-        return ALLURE.equals(toolName);
+        return AllureConstants.ALLURE_TOOL_NAME.equals(toolName);
     }
 
     /**

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static ru.yandex.qatools.allure.AllureBuildServiceAdapter.ALLURE_TOOL_NAME;
+import static ru.yandex.qatools.allure.AllureConstants.ALLURE_TOOL_NAME;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
