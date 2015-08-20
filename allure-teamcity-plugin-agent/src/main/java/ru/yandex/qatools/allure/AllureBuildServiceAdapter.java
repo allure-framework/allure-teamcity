@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import static java.lang.String.format;
+import static ru.yandex.qatools.allure.AllureConstants.ALLURE_TOOL_NAME;
 import static ru.yandex.qatools.allure.AllureConstants.ISSUE_TRACKER_PATTERN;
 import static ru.yandex.qatools.allure.AllureConstants.RESULTS_DIRECTORY;
 import static ru.yandex.qatools.allure.AllureConstants.TMS_PATTERN;
@@ -47,11 +48,6 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * provided to allure commandline tool.
      */
     public static final String ALLURE_PROPERTIES = "allure.properties";
-
-    /**
-     * The name of Allure commandline tool.
-     */
-    public static final String ALLURE_TOOL_NAME = "allure";
 
     /**
      * The name of main class of Allure commandline tool.

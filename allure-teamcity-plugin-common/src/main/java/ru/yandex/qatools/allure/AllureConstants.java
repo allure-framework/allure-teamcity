@@ -18,6 +18,11 @@ public final class AllureConstants {
 
     public static final String TMS_PATTERN = "allure.tests.management.pattern";
 
+    /**
+     * The name of Allure commandline tool.
+     */
+    public static final String ALLURE_TOOL_NAME = "allure-commandline";
+
     AllureConstants() {
     }
 }
