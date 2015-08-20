@@ -1,6 +1,6 @@
 # Allure TeamCity Plugin
 
-[![release](http://github-release-version.herokuapp.com/github/allure-framework/allure-teamcity-plugin/release.svg?style=flat)](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) [![build](https://img.shields.io/teamcity/http/teamcity.qatools.ru/s/allure_teamcity_plugin_master_deploy.svg?style=flat)](http://teamcity.qatools.ru/viewType.html?buildTypeId=allure_teamcity_plugin_master_deploy&guest=1)
+[![release](http://github-release-version.herokuapp.com/github/allure-framework/allure-teamcity-plugin/release.svg?style=flat)](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) [![build](https://img.shields.io/jenkins/s/http/ci.qatools.ru/allure-teamcity-plugin_master-deploy.svg?style=flat)](http://ci.qatools.ru/job/allure-teamcity-plugin_master-deploy/lastBuild/)
 
 This repository contains Allure plugin for [Teamcity](http://www.jetbrains.com/teamcity/) allowing to generate [Allure report](http://allure.qatools.ru) from [existing Allure XML files](https://github.com/allure-framework/allure-core/wiki#gathering-information-about-tests) as Teamcity build artifact.
 
