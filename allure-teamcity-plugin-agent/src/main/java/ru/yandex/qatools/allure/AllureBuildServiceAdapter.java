@@ -134,8 +134,8 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @NotNull
     @Override
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
-        Path lib = clientDirectory.resolve("lib");
-        Path conf = clientDirectory.resolve("conf");
+        String lib = format("%s/*", clientDirectory.resolve("lib"));
+        String conf = clientDirectory.resolve("conf").toString();
 
         JavaCommandLineBuilder cliBuilder = new JavaCommandLineBuilder();
 
@@ -145,7 +145,7 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
         cliBuilder.setWorkingDir(workingDirectory);
         cliBuilder.setJvmArgs(JavaRunnerUtil.extractJvmArgs(getRunnerParameters()));
         cliBuilder.setMainClass(MAIN_CLASS);
-        cliBuilder.setClassPath(format("%s/*:%s", lib, conf));
+        cliBuilder.setClassPath(formatClassPath(lib, conf));
 
         cliBuilder.addSystemProperty("allure.home", clientDirectory.toString());
         cliBuilder.addSystemProperty("allure.config", propertiesFile.toString());
@@ -236,5 +236,26 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     protected String getTeamcityBaseUrl() {
         String baseUrl = getConfigParameters().get("teamcity.serverUrl");
         return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+    }
+
+    /**
+     * Format the classpath string from given classpath elements.
+     */
+    @NotNull
+    protected String formatClassPath(@NotNull String first, @NotNull String... others) {
+        String result = first;
+        for (String other : others) {
+            result += getClassPathSeparator() + other;
+        }
+        return result;
+    }
+
+    /**
+     * Returns the platform-depended classpath separator.
+     * @return semicolon for windows OS and colon for others.
+     */
+    @NotNull
+    protected String getClassPathSeparator() {
+        return getConfigParameters().get("teamcity.agent.jvm.path.separator");
     }
 }
