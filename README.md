@@ -9,6 +9,6 @@
 * [Releases and Changelog](https://github.com/allure-framework/allure-teamcity-plugin/releases)
 
 ## Contact us
-* Mailing list: [allure@yandex-team.ru](mailto:allure@yandex-team.ru)
 * Gitter chat room: [https://gitter.im/allure-framework/allure-core](https://gitter.im/allure-framework/allure-core)
+* Mailing list: [allure@yandex-team.ru](mailto:allure@yandex-team.ru)
 * StackOverflow tag: [Allure](http://stackoverflow.com/questions/tagged/allure)
