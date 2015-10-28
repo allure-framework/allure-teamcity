@@ -4,10 +4,8 @@
 
 ## Getting Started
 
-* [An example report](http://ci.qatools.ru/job/allure-core_master-deploy/lastSuccessfulBuild/artifact/allure-report-preview/target/allure-report/index.html#/)
 * [Documentation](http://wiki.qatools.ru/display/AL/Allure+TeamCity+Plugin)
 * [Issue Tracking](https://github.com/allure-framework/allure-teamcity-plugin/issues?labels=&milestone=&page=1&state=open)
-* [CI](http://ci.qatools.ru/)
 * [Releases and Changelog](https://github.com/allure-framework/allure-teamcity-plugin/releases)
 
 ## Contact us
