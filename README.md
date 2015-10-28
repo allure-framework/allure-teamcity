@@ -1,6 +1,6 @@
 # Allure TeamCity Plugin
 
-[![release](http://github-release-version.herokuapp.com/github/allure-framework/allure-teamcity-plugin/release.svg?style=flat)](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) [![build](https://img.shields.io/jenkins/s/http/ci.qatools.ru/allure-teamcity-plugin_master-deploy.svg?style=flat)](http://ci.qatools.ru/job/allure-teamcity-plugin_master-deploy/lastBuild/)
+[![release](http://github-release-version.herokuapp.com/github/allure-framework/allure-teamcity-plugin/release.svg?style=flat)](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) [![build](https://img.shields.io/jenkins/s/http/ci.qatools.ru/allure-plugin_master-deploy.svg?style=flat)](http://ci.qatools.ru/job/allure-plugin_master-deploy/lastBuild/)
 
 ## Getting Started
 
