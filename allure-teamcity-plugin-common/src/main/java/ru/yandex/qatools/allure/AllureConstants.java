@@ -14,6 +14,8 @@ public final class AllureConstants {
 
     public static final String RESULTS_DIRECTORY = "allure.result.directory";
 
+    public static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
+
     public static final String ISSUE_TRACKER_PATTERN = "allure.issues.tracker.pattern";
 
     public static final String TMS_PATTERN = "allure.tests.management.pattern";

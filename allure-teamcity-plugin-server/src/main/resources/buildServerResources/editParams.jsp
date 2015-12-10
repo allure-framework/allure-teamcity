@@ -16,14 +16,12 @@
     </td>
 </tr>
 
-<tr id="<%=AllureConstants.REPORT_VERSION%>.container">
-    <th><label for="<%=AllureConstants.REPORT_VERSION%>">Report version:</label></th>
+<tr id="<%=AllureConstants.REPORT_PATH_PREFIX%>.container">
+    <th><label for="<%=AllureConstants.REPORT_PATH_PREFIX%>">Report artifact subdirectory:</label></th>
     <td>
-        <props:textProperty name="<%=AllureConstants.REPORT_VERSION%>" className="longField" disabled="true"/>
+        <props:textProperty name="<%=AllureConstants.REPORT_PATH_PREFIX%>" className="longField"/>
         <span class="smallNote">
-            The version of generated report depends on version of Allure commandline tool. For more
-            information you can see <a href="https://github.com/allure-framework/allure-teamcity-plugin">this wiki
-            page.</a>
+            The subdirectory (or subdirectories) to put generated report into. An example <strong>allure-report/</strong>
         </span>
     </td>
 </tr>

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.yandex.qatools.allure.AllureConstants.ISSUE_TRACKER_PATTERN;
+import static ru.yandex.qatools.allure.AllureConstants.REPORT_PATH_PREFIX;
 import static ru.yandex.qatools.allure.AllureConstants.RESULTS_DIRECTORY;
 import static ru.yandex.qatools.allure.AllureConstants.TMS_PATTERN;
 
@@ -28,10 +29,12 @@ public class AllurePropertiesProcessor implements PropertiesProcessor {
         List<InvalidProperty> problems = new ArrayList<>();
 
         validateNotEmpty(properties, RESULTS_DIRECTORY, problems);
+        validateNotEmpty(properties, REPORT_PATH_PREFIX, problems);
         validateNotEmpty(properties, TMS_PATTERN, problems);
         validateNotEmpty(properties, ISSUE_TRACKER_PATTERN, problems);
 
         validateRelative(properties, RESULTS_DIRECTORY, problems);
+        validateRelative(properties, REPORT_PATH_PREFIX, problems);
 
         validatePattern(properties, TMS_PATTERN, problems);
         validatePattern(properties, ISSUE_TRACKER_PATTERN, problems);
@@ -64,7 +67,7 @@ public class AllurePropertiesProcessor implements PropertiesProcessor {
     protected void validateRelative(Map<String, String> properties, String key, List<InvalidProperty> problems) {
         String value = properties.get(key);
         if (StringUtils.isEmpty(value) || Paths.get(value).isAbsolute()) {
-            problems.add(new InvalidProperty(key, "The path should be relative from checkout directory"));
+            problems.add(new InvalidProperty(key, "The path should be relative"));
         }
     }
 
