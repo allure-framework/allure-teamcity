@@ -93,6 +93,7 @@ public class AllureRunType extends RunType {
         defaults.put(AllureConstants.ISSUE_TRACKER_PATTERN, "%s");
         defaults.put(AllureConstants.TMS_PATTERN, "%s");
         defaults.put(AllureConstants.RESULTS_DIRECTORY, "allure-results/");
+        defaults.put(AllureConstants.REPORT_PATH_PREFIX, "allure-report/");
         return defaults;
     }
 }

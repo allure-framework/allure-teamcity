@@ -21,6 +21,7 @@ import java.util.Properties;
 import static java.lang.String.format;
 import static ru.yandex.qatools.allure.AllureConstants.ALLURE_TOOL_NAME;
 import static ru.yandex.qatools.allure.AllureConstants.ISSUE_TRACKER_PATTERN;
+import static ru.yandex.qatools.allure.AllureConstants.REPORT_PATH_PREFIX;
 import static ru.yandex.qatools.allure.AllureConstants.RESULTS_DIRECTORY;
 import static ru.yandex.qatools.allure.AllureConstants.TMS_PATTERN;
 
@@ -71,6 +72,11 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private Path reportDirectory;
 
     /**
+     * The absolute path to the directory to publish after report generation.
+     */
+    private Path reportArtifactDirectory;
+
+    /**
      * The absolute path to the directory with Allure results.
      */
     private Path resultsDirectory;
@@ -103,8 +109,11 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
         resultsDirectory = Paths.get(workingDirectory, getRunnerParameters().get(RESULTS_DIRECTORY));
         clientDirectory = Paths.get(getToolPath(ALLURE_TOOL_NAME));
 
+        String reportDirectoryPrefix = getRunnerParameters().get(REPORT_PATH_PREFIX);
+
         try {
-            reportDirectory = Files.createTempDirectory(tempDirectory, ALLURE_REPORT);
+            reportArtifactDirectory = Files.createTempDirectory(tempDirectory, ALLURE_REPORT);
+            reportDirectory = reportArtifactDirectory.resolve(reportDirectoryPrefix);
             Path configDirectory = Files.createTempDirectory(tempDirectory, ALLURE_CONFIG);
             propertiesFile = configDirectory.resolve(ALLURE_PROPERTIES);
         } catch (IOException e) {
@@ -164,7 +173,7 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @Override
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
-        artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+        artifactsWatcher.addNewArtifactsPath(reportArtifactDirectory.toString());
     }
 
     /**
@@ -252,6 +261,7 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     /**
      * Returns the platform-depended classpath separator.
+     *
      * @return semicolon for windows OS and colon for others.
      */
     @NotNull

@@ -7,7 +7,7 @@
 </div>
 
 <div class="parameter">
-    Report version:<strong><props:displayValue name="<%=AllureConstants.REPORT_VERSION%>" emptyValue="none"/></strong>
+    Report artifact subdirectory:<strong><props:displayValue name="<%=AllureConstants.REPORT_PATH_PREFIX%>" emptyValue="none"/></strong>
 </div>
 <div class="parameter">
     Issue tracker pattern:<strong><props:displayValue name="<%=AllureConstants.ISSUE_TRACKER_PATTERN%>" emptyValue="none"/></strong>
