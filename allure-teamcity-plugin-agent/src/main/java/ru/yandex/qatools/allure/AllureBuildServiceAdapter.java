@@ -1,59 +1,33 @@
 package ru.yandex.qatools.allure;
 
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.BuildProgressLogger;
+import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
-import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
-import jetbrains.buildServer.agent.runner.JavaCommandLineBuilder;
-import jetbrains.buildServer.agent.runner.JavaRunnerUtil;
-import jetbrains.buildServer.agent.runner.ProgramCommandLine;
-import jetbrains.buildServer.runner.JavaRunnerConstants;
+import jetbrains.buildServer.agent.runner.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import ru.yandex.qatools.commons.model.Environment;
+import ru.yandex.qatools.allure.callables.AddExecutorInfo;
 
-import javax.xml.bind.JAXB;
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 
 import static java.lang.String.format;
-import static ru.yandex.qatools.allure.AllureConstants.ALLURE_TOOL_NAME;
-import static ru.yandex.qatools.allure.AllureConstants.ISSUE_TRACKER_PATTERN;
-import static ru.yandex.qatools.allure.AllureConstants.REPORT_PATH_PREFIX;
-import static ru.yandex.qatools.allure.AllureConstants.RESULTS_DIRECTORY;
-import static ru.yandex.qatools.allure.AllureConstants.TMS_PATTERN;
+import static ru.yandex.qatools.allure.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
  *         Date: 06.08.15
  */
-public class AllureBuildServiceAdapter extends BuildServiceAdapter {
+class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
-    /**
-     * The prefix of directory in build temporary directory witch will be
-     * used as report directory.
-     */
-    public static final String ALLURE_REPORT = "allure-report";
-
-    /**
-     * The prefix of directory in build temporary directory witch will be
-     * used to hold the allure.properties file.
-     */
-    public static final String ALLURE_CONFIG = "allure-config";
-
-    /**
-     * The name of Allure configuration file. The file with such name
-     * will be created in {@link #ALLURE_CONFIG} temporary directory and
-     * provided to allure commandline tool.
-     */
-    public static final String ALLURE_PROPERTIES = "allure.properties";
-
-    /**
-     * The name of main class of Allure commandline tool.
-     */
-    public static final String MAIN_CLASS = "ru.yandex.qatools.allure.CommandLine";
+    private static final String ALLURE_EXEC_NAME = "allure";
 
     /**
      * Can be used to notify agent artifacts publisher about new artifacts to be
@@ -72,11 +46,6 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private Path reportDirectory;
 
     /**
-     * The absolute path to the directory to publish after report generation.
-     */
-    private Path reportArtifactDirectory;
-
-    /**
      * The absolute path to the directory with Allure results.
      */
     private Path resultsDirectory;
@@ -87,14 +56,9 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private Path clientDirectory;
 
     /**
-     * The absolute path to the Allure configuration file.
-     */
-    private Path propertiesFile;
-
-    /**
      * Creates an instance of adapter.
      */
-    public AllureBuildServiceAdapter(@NotNull final ArtifactsWatcher artifactsWatcher) {
+    AllureBuildServiceAdapter(@NotNull final ArtifactsWatcher artifactsWatcher) {
         this.artifactsWatcher = artifactsWatcher;
     }
 
@@ -103,22 +67,30 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @Override
     public void afterInitialized() throws RunBuildException {
-        Path tempDirectory = Paths.get(getBuildTempDirectory().getAbsolutePath());
 
         workingDirectory = getCheckoutDirectory().getAbsolutePath();
         resultsDirectory = Paths.get(workingDirectory, getRunnerParameters().get(RESULTS_DIRECTORY));
-        clientDirectory = Paths.get(getToolPath(ALLURE_TOOL_NAME));
+        clientDirectory = getClientDirectory(Paths.get(getToolPath(ALLURE_TOOL_NAME)));
+        reportDirectory = Paths.get(workingDirectory, getRunnerParameters().get(REPORT_PATH_PREFIX));
 
-        String reportDirectoryPrefix = getRunnerParameters().get(REPORT_PATH_PREFIX);
+    }
 
-        try {
-            reportArtifactDirectory = Files.createTempDirectory(tempDirectory, ALLURE_REPORT);
-            reportDirectory = reportArtifactDirectory.resolve(reportDirectoryPrefix);
-            Path configDirectory = Files.createTempDirectory(tempDirectory, ALLURE_CONFIG);
-            propertiesFile = configDirectory.resolve(ALLURE_PROPERTIES);
+
+    private static Path getClientDirectory(Path client) throws RunBuildException {
+        DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+            @Override
+            public boolean accept(Path file) throws IOException {
+                return Files.isDirectory(file);
+            }
+        };
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(client, filter)) {
+            for (Path path : stream)
+                if (path.getFileName().toString().startsWith("allure"))
+                    return path;
         } catch (IOException e) {
-            throw new RunBuildException("Initialization error: ", e);
+            throw new RunBuildException("Cannot find allure tool folder.", e);
         }
+        return client;
     }
 
     /**
@@ -132,40 +104,46 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
                     resultsDirectory
             ));
         }
+        copyHistory();
+        try {
+            clearReport();
+            addExecutorInfo();
+        } catch (Exception e) {
+            throw new RunBuildException(e);
+        }
+    }
 
-        writeEnvironment();
-        writeProperties();
+    private void clearReport() throws IOException {
+        if (Files.exists(reportDirectory)) {
+            FileUtils.deleteDirectory(reportDirectory.toFile());
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Write the history file to results directory.
      */
-    @NotNull
-    @Override
-    public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
-        String lib = format("%s/*", clientDirectory.resolve("lib"));
-        String conf = clientDirectory.resolve("conf").toString();
+    private void copyHistory() {
 
-        JavaCommandLineBuilder cliBuilder = new JavaCommandLineBuilder();
+        Path source = Paths.get(reportDirectory.toAbsolutePath().toString() + "/data/history.json");
+        if (Files.exists(source)) {
+            Path destination = Paths.get(resultsDirectory.toString() + "/history.json");
+            try {
+                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
+            }
+        }
 
-        String javaHome = getRunnerParameters().get(JavaRunnerConstants.TARGET_JDK_HOME);
-        cliBuilder.setJavaHome(javaHome);
-        cliBuilder.setBaseDir(workingDirectory);
-        cliBuilder.setWorkingDir(workingDirectory);
-        cliBuilder.setJvmArgs(JavaRunnerUtil.extractJvmArgs(getRunnerParameters()));
-        cliBuilder.setMainClass(MAIN_CLASS);
-        cliBuilder.setClassPath(formatClassPath(lib, conf));
+    }
 
-        cliBuilder.addSystemProperty("allure.home", clientDirectory.toString());
-        cliBuilder.addSystemProperty("allure.config", propertiesFile.toString());
-
-        cliBuilder.addProgramArg("-v");
-        cliBuilder.addProgramArg("generate");
-        cliBuilder.addProgramArg(resultsDirectory.toString());
-        cliBuilder.addProgramArg("--output");
-        cliBuilder.addProgramArg(reportDirectory.toString());
-
-        return cliBuilder.build();
+    /**
+     * Write the test executor info to results directory.
+     */
+    private void addExecutorInfo() throws IOException {
+        String rootUrl = getTeamcityBaseUrl();
+        String buildUrl = getBuildUrl();
+        String reportUrl = getArtifactsUrl();
+        new AddExecutorInfo(rootUrl, "#"+getBuild().getBuildId(), buildUrl, reportUrl).invoke(resultsDirectory);
     }
 
     /**
@@ -173,63 +151,29 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @Override
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
-        artifactsWatcher.addNewArtifactsPath(reportArtifactDirectory.toString());
+        artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
     }
 
     /**
-     * Write the environment bean to results directory.
-     */
-    protected void writeEnvironment() {
-        Environment environment = getEnvironment();
-        Path env = resultsDirectory.resolve("environment.xml");
-        JAXB.marshal(environment, env.toFile());
-    }
-
-    /**
-     * Write the Allure configuration file to {@link #propertiesFile}.
-     */
-    protected void writeProperties() throws RunBuildException {
-        try (OutputStream stream = Files.newOutputStream(propertiesFile)) {
-            createPropertiesWith(ISSUE_TRACKER_PATTERN, TMS_PATTERN)
-                    .store(stream, "the configuration file provided by Teamcity");
-        } catch (IOException e) {
-            throw new RunBuildException("Could not store Allure configuration file", e);
-        }
-    }
-
-    /**
-     * Creates an instance of {@link Properties} with values from
-     * {@link #getRunnerParameters()} with given keys.
+     * Returns the build's artifacts url for current build.
+     * @see #getTeamcityBaseUrl()
      */
     @NotNull
-    protected Properties createPropertiesWith(String... keys) {
-        Properties properties = new Properties();
-        for (String key : keys) {
-            properties.put(key, getRunnerParameters().get(key));
-        }
-        return properties;
-    }
-
-    /**
-     * Returns an environment bean with information about build.
-     */
-    @NotNull
-    protected Environment getEnvironment() {
-        String buildTypeName = getBuild().getBuildTypeName();
-        String buildNumber = getBuild().getBuildNumber();
-        return new Environment()
-                .withId(buildNumber)
-                .withUrl(getBuildUrl())
-                .withName(buildTypeName);
+    private String getArtifactsUrl() {
+        return format(
+                "%sviewLog.html?tab=artifacts&buildId=%s&buildTypeId=%s",
+                getTeamcityBaseUrl(),
+                getBuild().getBuildId(),
+                getBuild().getBuildTypeExternalId()
+        );
     }
 
     /**
      * Returns the build url for current build.
-     *
      * @see #getTeamcityBaseUrl()
      */
     @NotNull
-    protected String getBuildUrl() {
+    private String getBuildUrl() {
         return format(
                 "%sviewLog.html?tab=buildResultsDiv&buildId=%s&buildTypeId=%s",
                 getTeamcityBaseUrl(),
@@ -242,30 +186,63 @@ public class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Returns the base url of teamcity server.
      */
     @NotNull
-    protected String getTeamcityBaseUrl() {
+    private String getTeamcityBaseUrl() {
         String baseUrl = getConfigParameters().get("teamcity.serverUrl");
         return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     }
 
     /**
-     * Format the classpath string from given classpath elements.
+     * {@inheritDoc}
      */
     @NotNull
-    protected String formatClassPath(@NotNull String first, @NotNull String... others) {
-        String result = first;
-        for (String other : others) {
-            result += getClassPathSeparator() + other;
-        }
-        return result;
+    @Override
+    public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
+
+        BuildProgressLogger buildLogger = getLogger();
+        BuildRunnerContext buildRunnerContext = getRunnerContext();
+        Map<String, String> programEnvironmentVariables = buildRunnerContext.getBuildParameters().getEnvironmentVariables();
+        String programPath = getProgramPath();
+        List<String> programArgs = getProgramArgs();
+
+        buildLogger.message("Program environment variables: " + programEnvironmentVariables.toString());
+        buildLogger.message("Program working directory: " + workingDirectory);
+        buildLogger.message("Program path: " + programPath);
+        buildLogger.message("Program args: " + programArgs.toString());
+
+        return new SimpleProgramCommandLine(programEnvironmentVariables, workingDirectory, programPath, programArgs);
     }
 
-    /**
-     * Returns the platform-depended classpath separator.
-     *
-     * @return semicolon for windows OS and colon for others.
-     */
+    private List<String> getProgramArgs() {
+        List<String> list = new ArrayList<>();
+
+        list.add("generate");
+        list.add(resultsDirectory.toString());
+        list.add("-o");
+        list.add(reportDirectory.toString());
+
+        return list;
+    }
+
+    private String getProgramPath() throws RunBuildException {
+
+        BuildProgressLogger buildLogger = getLogger();
+        String path = clientDirectory.toAbsolutePath().toString();
+        String executableName = getExecutableName();
+
+        String executableFile = path + File.separatorChar + "bin" + File.separatorChar + executableName;
+        File file = new File(executableFile);
+
+        if (!file.exists())
+            throw new RunBuildException("Cannot find executable \'" + executableFile + "\'");
+        if (!file.setExecutable(true))
+            buildLogger.message("Cannot set file: " + executableFile + " executable.");
+
+        return file.getAbsolutePath();
+
+    }
+
     @NotNull
-    protected String getClassPathSeparator() {
-        return getConfigParameters().get("teamcity.agent.jvm.path.separator");
+    private static String getExecutableName() {
+        return SystemUtils.IS_OS_WINDOWS ? ALLURE_EXEC_NAME + ".bat" : ALLURE_EXEC_NAME;
     }
 }

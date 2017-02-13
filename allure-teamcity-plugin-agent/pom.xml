@@ -47,13 +47,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- For environment bean -->
-        <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-model</artifactId>
-            <version>1.4.16</version>
-        </dependency>
-
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-report-builder</artifactId>
@@ -76,6 +69,13 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
         </dependency>
     </dependencies>
     <build>
