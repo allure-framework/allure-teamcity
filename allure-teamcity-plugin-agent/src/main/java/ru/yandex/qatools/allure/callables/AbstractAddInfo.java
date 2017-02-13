@@ -13,7 +13,7 @@ import java.nio.file.Path;
  */
 public abstract class AbstractAddInfo {
 
-    public Path invoke(Path outputDirectory) throws IOException, InterruptedException {
+    public Path invoke(Path outputDirectory) throws IOException {
         Files.createDirectories(outputDirectory);
         Path testRun = outputDirectory.resolve(getFileName());
         try (Writer writer = Files.newBufferedWriter(testRun, StandardCharsets.UTF_8)) {

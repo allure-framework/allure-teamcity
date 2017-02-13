@@ -76,21 +76,19 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
 
-    private static Path getClientDirectory(Path client) {
-
+    private static Path getClientDirectory(Path client) throws RunBuildException {
         DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path file) throws IOException {
-                return (Files.isDirectory(file));
+                return Files.isDirectory(file);
             }
         };
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(client, filter)) {
             for (Path path : stream)
-                if (path.getFileName().toString().startsWith("allure")) {
+                if (path.getFileName().toString().startsWith("allure"))
                     return path;
-                }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RunBuildException("Cannot find allure tool folder.", e);
         }
         return client;
     }
@@ -109,7 +107,6 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         copyHistory();
         try {
             clearReport();
-//            addTestRunInfo();
             addExecutorInfo();
         } catch (Exception e) {
             throw new RunBuildException(e);
@@ -133,26 +130,16 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
             try {
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                // We don't stop the build if history cannot be written.
+                getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
             }
         }
 
     }
 
     /**
-     * Write the test run info to results directory.
-     */
-    private void addTestRunInfo() throws IOException, InterruptedException {
-//        Add start build time
-//        long start = ADD START TIME;
-//        long stop = new Date().getTime();
-//        new AddTestRunInfo(getBuild().getBuildNumber(), start, stop).invoke(resultsDirectory);
-    }
-
-    /**
      * Write the test executor info to results directory.
      */
-    private void addExecutorInfo() throws IOException, InterruptedException {
+    private void addExecutorInfo() throws IOException {
         String rootUrl = getTeamcityBaseUrl();
         String buildUrl = getBuildUrl();
         String reportUrl = getArtifactsUrl();
