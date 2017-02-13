@@ -8,22 +8,22 @@ package ru.yandex.qatools.allure;
  */
 public final class AllureConstants {
 
-    public static final String RUN_TYPE = "allureReportGeneratorRunner";
+    static final String RUN_TYPE = "allureReportGeneratorRunner";
 
-    public static final String REPORT_VERSION = "allure.version";
+    static final String RESULTS_DIRECTORY = "allure.result.directory";
 
-    public static final String RESULTS_DIRECTORY = "allure.result.directory";
+    /** The default directory with allure results. */
+    static final String RESULTS_DIRECTORY_DEFAULT = "allure-results/";
 
-    public static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
+    static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
 
-    public static final String ISSUE_TRACKER_PATTERN = "allure.issues.tracker.pattern";
-
-    public static final String TMS_PATTERN = "allure.tests.management.pattern";
+    /** The default subdirectory (or subdirectories) to put generated report into. */
+    static final String REPORT_PATH_PREFIX_DEFAULT = "allure-report/";
 
     /**
      * The name of Allure commandline tool.
      */
-    public static final String ALLURE_TOOL_NAME = "allure-commandline";
+    static final String ALLURE_TOOL_NAME = "allure-commandline";
 
     AllureConstants() {
     }

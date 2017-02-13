@@ -63,7 +63,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <teamcity-version>8.1</teamcity-version>
+        <teamcity-version>9.1</teamcity-version>
         <allure-version>1.4.15</allure-version>
         <compiler-version>1.7</compiler-version>
     </properties>
