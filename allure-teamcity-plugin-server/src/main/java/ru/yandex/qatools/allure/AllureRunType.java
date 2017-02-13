@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.yandex.qatools.allure.AllureConstants.*;
+
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
  *         Date: 06.08.15
@@ -89,11 +91,8 @@ public class AllureRunType extends RunType {
     @Override
     public Map<String, String> getDefaultRunnerProperties() {
         Map<String, String> defaults = new HashMap<>();
-        defaults.put(AllureConstants.REPORT_VERSION, "bundled");
-        defaults.put(AllureConstants.ISSUE_TRACKER_PATTERN, "%s");
-        defaults.put(AllureConstants.TMS_PATTERN, "%s");
-        defaults.put(AllureConstants.RESULTS_DIRECTORY, "allure-results/");
-        defaults.put(AllureConstants.REPORT_PATH_PREFIX, "allure-report/");
+        defaults.put(AllureConstants.RESULTS_DIRECTORY, RESULTS_DIRECTORY_DEFAULT);
+        defaults.put(AllureConstants.REPORT_PATH_PREFIX, REPORT_PATH_PREFIX_DEFAULT);
         return defaults;
     }
 }
