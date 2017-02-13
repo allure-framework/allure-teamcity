@@ -131,6 +131,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
+                getLogger().exception(e);
             }
         }
 
