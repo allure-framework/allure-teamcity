@@ -124,7 +124,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     private void copyHistory() {
         Path source = reportDirectory.resolve("history");
-        if (Files.exists(source)) {
+        if (Files.exists(source) && Files.isDirectory(source)) {
             Path destination = resultsDirectory.resolve("history");
             try {
                 FileUtils.copyDirectory(source.toFile(), destination.toFile());
