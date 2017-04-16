@@ -123,10 +123,9 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Write the history file to results directory.
      */
     private void copyHistory() {
-
-        Path source = Paths.get(reportDirectory.toAbsolutePath().toString() + "/history");
+        Path source = reportDirectory.resolve("history");
         if (Files.exists(source)) {
-            Path destination = Paths.get(resultsDirectory.toString() + "/history");
+            Path destination = resultsDirectory.resolve("history");
             try {
                 FileUtils.copyDirectory(source.toFile(), destination.toFile());
             } catch (IOException e) {
