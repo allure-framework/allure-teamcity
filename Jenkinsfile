@@ -1,10 +1,6 @@
 pipeline {
-    agent {
-        label 'java'
-    }
-    tools {
-        maven 'default'
-    }
+    agent { label 'java' }
+    tools { maven 'default' }
     stages {
         stage('Build') {
             steps {
