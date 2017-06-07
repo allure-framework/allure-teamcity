@@ -123,12 +123,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Write the history file to results directory.
      */
     private void copyHistory() {
-
-        Path source = Paths.get(reportDirectory.toAbsolutePath().toString() + "/data/history.json");
-        if (Files.exists(source)) {
-            Path destination = Paths.get(resultsDirectory.toString() + "/history.json");
+        Path source = reportDirectory.resolve("history");
+        if (Files.exists(source) && Files.isDirectory(source)) {
+            Path destination = resultsDirectory.resolve("history");
             try {
-                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                FileUtils.copyDirectory(source.toFile(), destination.toFile());
             } catch (IOException e) {
                 getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
                 getLogger().exception(e);
@@ -162,10 +161,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @NotNull
     private String getArtifactsUrl() {
         return format(
-                "%sviewLog.html?tab=artifacts&buildId=%s&buildTypeId=%s",
+                "%srepository/download/%s/%s:id/index.html",
                 getTeamcityBaseUrl(),
-                getBuild().getBuildId(),
-                getBuild().getBuildTypeExternalId()
+                getBuild().getBuildTypeExternalId(),
+                getBuild().getBuildId()
         );
     }
 
