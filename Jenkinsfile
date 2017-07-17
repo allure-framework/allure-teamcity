@@ -1,30 +1,14 @@
 pipeline {
     agent { label 'java' }
-    parameters {
-        booleanParam(name: 'RELEASE', defaultValue: false, description: 'Perform release?')
-        string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release version')
-        string(name: 'DEVELOPMENT_VERSION', defaultValue: '', description: 'Development version (without SNAPSHOT)')
-    }
     stages {
         stage('Build') {
             steps {
-                sh './mvnw -Dmaven.test.failure.ignore=true clean verify'
-            }
-        }
-        stage('Release') {
-            when { expression { return params.RELEASE } }
-            steps {
-                sshagent(['qameta-ci_ssh']) {
-                    sh 'git checkout master && git pull origin master'
-                    sh "./mvnw release:prepare release:perform -B -s ${env.SETTINGS} " +
-                            "-DreleaseVersion=${params.RELEASE_VERSION} " +
-                            "-DdevelopmentVersion=${params.DEVELOPMENT_VERSION}-SNAPSHOT"
-                }
+                sh './gradle build'
             }
         }
         stage('Archive') {
             steps {
-                archiveArtifacts 'target/allure-teamcity-plugin.zip'
+                archiveArtifacts 'allure-teamcity-server/build/distributions/allure-teamcity.zip'
             }
         }
     }
