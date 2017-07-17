@@ -7,30 +7,19 @@
     <version>2.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Allure TeamCity Plugin</name>
+    <name>Allure for TeamCity</name>
     <description>Plugin adds support for generate Allure report based on tests results</description>
 
     <organization>
-        <name>Yandex</name>
-        <url>http://company.yandex.com</url>
+        <name>Allure Framework</name>
+        <url>https://github.com/allure-framework</url>
     </organization>
 
     <developers>
         <developer>
             <id>eroshenkoam</id>
             <name>Artem Eroshenko</name>
-            <email>eroshenkoam@yandex-team.ru</email>
-            <organization>Yandex</organization>
-        </developer>
-        <developer>
-            <id>vania-pooh</id>
-            <name>Ivan Krutov</name>
-            <email>vania-pooh@yandex-team.ru</email>
-        </developer>
-        <developer>
-            <id>charlie</id>
-            <name>Baev Dmitry</name>
-            <email>charlie@yandex-team.ru</email>
+            <email>eroshenkoam@qameta.io</email>
         </developer>
     </developers>
 
@@ -43,23 +32,22 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/allure-framework/allure-teamcity-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/allure-framework/allure-teamcity-plugin.git</developerConnection>
-        <url>https://github.com/allure-framework/allure-teamcity-plugin</url>
-        <tag>HEAD</tag>
+        <url>https://github.com/allure-framework/allure-teamcity</url>
+        <connection>scm:git:https://github.com/allure-framework/allure-teamcity.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/allure-framework/allure-teamcity.git</developerConnection>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/allure-framework/allure-teamcity-plugin/issues</url>
+        <url>https://github.com/allure-framework/allure-teamcity/issues</url>
     </issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <compiler.version>1.7</compiler.version>
 
-        <teamcity-version>9.1</teamcity-version>
-        <allure-version>1.4.15</allure-version>
-        <compiler-version>1.7</compiler-version>
+        <allure.version>1.4.15</allure.version>
+        <teamcity.version>9.1</teamcity.version>
     </properties>
 
     <modules>
@@ -76,8 +64,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>${compiler-version}</source>
-                    <target>${compiler-version}</target>
+                    <source>${compiler.version}</source>
+                    <target>${compiler.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,7 +81,7 @@
                 <artifactId>teamcity-sdk-maven-plugin</artifactId>
                 <version>0.2</version>
                 <configuration>
-                    <teamcityDir>.teamcity/${teamcity-version}</teamcityDir>
+                    <teamcityDir>.teamcity/${teamcity.version}</teamcityDir>
                     <agentDebugStr>-Xmx2048m -XX:MaxPermSize=512m</agentDebugStr>
                 </configuration>
             </plugin>
