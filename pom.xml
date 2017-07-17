@@ -63,9 +63,9 @@
     </properties>
 
     <modules>
-        <module>allure-teamcity-plugin-common</module>
-        <module>allure-teamcity-plugin-server</module>
-        <module>allure-teamcity-plugin-agent</module>
+        <module>allure-teamcity-common</module>
+        <module>allure-teamcity-server</module>
+        <module>allure-teamcity-agent</module>
         <module>build</module>
     </modules>
 

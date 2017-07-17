@@ -11,7 +11,7 @@
             <outputDirectory>/</outputDirectory>
         </file>
         <file>
-            <source>target/allure-teamcity-plugin-agent.zip</source>
+            <source>target/allure-teamcity-agent.zip</source>
             <outputDirectory>agent</outputDirectory>
         </file>
     </files>
@@ -19,8 +19,8 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>io.qameta.allure:allure-teamcity-plugin-common</include>
-                <include>io.qameta.allure:allure-teamcity-plugin-server</include>
+                <include>io.qameta.allure:allure-teamcity-common</include>
+                <include>io.qameta.allure:allure-teamcity-server</include>
             </includes>
             <binaries>
                 <outputDirectory>server</outputDirectory>

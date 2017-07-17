@@ -18,18 +18,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-teamcity-plugin-server</artifactId>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-teamcity-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-teamcity-plugin-agent</artifactId>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-teamcity-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-teamcity-plugin-common</artifactId>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-teamcity-agent</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -78,7 +78,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>allure-teamcity-plugin-agent</finalName>
+                            <finalName>allure-teamcity-agent</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
                                 <descriptor>plugin-agent-assembly.xml</descriptor>
@@ -92,7 +92,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>allure-teamcity-plugin</finalName>
+                            <finalName>allure-teamcity</finalName>
                             <outputDirectory>${project.parent.build.directory}</outputDirectory>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>

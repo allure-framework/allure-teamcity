@@ -7,7 +7,7 @@
     </formats>
     <files>
         <file>
-            <source>../allure-teamcity-plugin-agent/teamcity-plugin.xml</source>
+            <source>../allure-teamcity-agent/teamcity-plugin.xml</source>
             <outputDirectory>/</outputDirectory>
         </file>
     </files>
@@ -15,8 +15,8 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>io.qameta.allure:allure-teamcity-plugin-common</include>
-                <include>io.qameta.allure:allure-teamcity-plugin-agent</include>
+                <include>io.qameta.allure:allure-teamcity-common</include>
+                <include>io.qameta.allure:allure-teamcity-agent</include>
             </includes>
             <binaries>
                 <outputDirectory>lib</outputDirectory>
