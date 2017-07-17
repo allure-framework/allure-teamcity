@@ -57,12 +57,20 @@
                             <value>${project.parent.name}</value>
                         </replacement>
                         <replacement>
+                            <token>@Version@</token>
+                            <value>${project.parent.version}</value>
+                        </replacement>
+                        <replacement>
                             <token>@Description@</token>
                             <value>${project.parent.description}</value>
                         </replacement>
                         <replacement>
-                            <token>@Version@</token>
-                            <value>${project.parent.version}</value>
+                            <token>@OrganizationName@</token>
+                            <value>${project.parent.organization.name}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@OrganizationUrl@</token>
+                            <value>${project.parent.organization.url}</value>
                         </replacement>
                     </replacements>
                 </configuration>
@@ -92,7 +100,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>allure-teamcity</finalName>
+                            <finalName>allure-teamcity-${version}</finalName>
                             <outputDirectory>${project.parent.build.directory}</outputDirectory>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>

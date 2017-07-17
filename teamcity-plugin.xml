@@ -6,11 +6,11 @@
         <display-name>@Name@</display-name>
         <version>@Version@</version>
         <description>@Description@</description>
-        <download-url>http://qatools.ru/</download-url>
-        <email>allure@yandex-team.ru</email>
+        <download-url>@OrganizationUrl@</download-url>
+        <email>allure@qameta.io</email>
         <vendor>
-            <name>Yandex LLC</name>
-            <url>http://www.yandex.ru/</url>
+            <name>@OrganizationName@</name>
+            <url>@OrganizationUrl@</url>
         </vendor>
     </info>
     <deployment use-separate-classloader="true"/>
