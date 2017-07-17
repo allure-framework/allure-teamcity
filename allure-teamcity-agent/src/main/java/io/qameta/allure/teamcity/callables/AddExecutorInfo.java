@@ -11,25 +11,29 @@ public class AddExecutorInfo extends AbstractAddInfo {
 
     private final String url;
 
+    private final String buildUrl;
+
     private final String buildName;
 
-    private final String buildUrl;
+    private final String buildOrder;
 
     private final String reportUrl;
 
-    public AddExecutorInfo(String url, String buildName, String buildUrl, String reportUrl) {
+    public AddExecutorInfo(String url, String buildName, String buildUrl, String buildOrder, String reportUrl) {
         this.url = url;
-        this.buildName = buildName;
         this.buildUrl = buildUrl;
+        this.buildName = buildName;
+        this.buildOrder = buildOrder;
         this.reportUrl = reportUrl;
     }
 
     @Override
     protected Object getData() {
         HashMap<String, Object> data = new HashMap<>();
-        data.put("name", "Bamboo");
-        data.put("type", "bamboo");
+        data.put("name", "TeamCity");
+        data.put("type", "teamcity");
         data.put("url", url);
+        data.put("buildOrder", buildOrder);
         data.put("buildName", buildName);
         data.put("buildUrl", buildUrl);
         data.put("reportUrl", reportUrl);
