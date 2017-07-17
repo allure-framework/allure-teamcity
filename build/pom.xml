@@ -100,7 +100,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>allure-teamcity-${version}</finalName>
+                            <finalName>allure-teamcity</finalName>
                             <outputDirectory>${project.parent.build.directory}</outputDirectory>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
