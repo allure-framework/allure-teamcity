@@ -1,13 +1,10 @@
-#IDEA Files
+#Idea
 .idea
-target
 *.iml
-*.ipr
 
-#Eclipse files
-*.settings
-*.classpath
-*.project
-*.pydevproject
+#Maven
+target
 
-.teamcity
+#Gradle
+.gradle
+build
