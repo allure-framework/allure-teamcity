@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.yandex.qatools.allure.AllureConstants.*;
+import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru

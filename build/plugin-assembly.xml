@@ -19,8 +19,8 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>ru.yandex.qatools.allure:allure-teamcity-plugin-common</include>
-                <include>ru.yandex.qatools.allure:allure-teamcity-plugin-server</include>
+                <include>io.qameta.allure:allure-teamcity-plugin-common</include>
+                <include>io.qameta.allure:allure-teamcity-plugin-server</include>
             </includes>
             <binaries>
                 <outputDirectory>server</outputDirectory>

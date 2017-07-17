@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 import jetbrains.buildServer.agent.AgentRunningBuild;
 import jetbrains.buildServer.agent.BuildRunnerContext;

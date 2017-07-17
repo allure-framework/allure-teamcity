@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 /**
  * The internal class with some constants needed to Allure plugin.

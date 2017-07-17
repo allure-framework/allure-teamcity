@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.yandex.qatools.allure</groupId>
-        <artifactId>allure-teamcity-plugin</artifactId>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-teamcity</artifactId>
         <version>2.4-SNAPSHOT</version>
     </parent>
     <artifactId>allure-teamcity-plugin-agent</artifactId>
@@ -41,22 +41,10 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
+            <groupId>io.qameta.allure</groupId>
             <artifactId>allure-teamcity-plugin-common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-report-builder</artifactId>
-            <version>2.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

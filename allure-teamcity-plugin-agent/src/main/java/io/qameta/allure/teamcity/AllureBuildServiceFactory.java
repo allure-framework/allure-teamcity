@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 import jetbrains.buildServer.agent.AgentBuildRunnerInfo;
 import jetbrains.buildServer.agent.BuildAgentConfiguration;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static ru.yandex.qatools.allure.AllureConstants.*;
+import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru

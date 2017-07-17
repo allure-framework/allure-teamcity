@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static ru.yandex.qatools.allure.AllureConstants.*;
+import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru

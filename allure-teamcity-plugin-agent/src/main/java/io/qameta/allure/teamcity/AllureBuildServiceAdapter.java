@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure;
+package io.qameta.allure.teamcity;
 
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProgressLogger;
@@ -8,7 +8,7 @@ import jetbrains.buildServer.agent.runner.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import ru.yandex.qatools.allure.callables.AddExecutorInfo;
+import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 
 import static java.lang.String.format;
-import static ru.yandex.qatools.allure.AllureConstants.*;
+import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru

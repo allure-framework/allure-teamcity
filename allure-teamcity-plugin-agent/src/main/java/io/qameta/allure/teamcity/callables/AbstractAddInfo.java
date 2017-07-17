@@ -1,4 +1,4 @@
-package ru.yandex.qatools.allure.callables;
+package io.qameta.allure.teamcity.callables;
 
 import net.sf.json.JSONObject;
 
