@@ -1,7 +1,7 @@
 apply plugin: "com.github.rodm.teamcity-agent"
 
 teamcity {
-    version = '9.1'
+    version = teamcityVersion
     descriptor {
         pluginDeployment {
             useSeparateClassloader = true
@@ -9,8 +9,10 @@ teamcity {
     }
 }
 
-agentPlugin.version = null
-agentPlugin.baseName = name
+agentPlugin {
+    baseName = name
+    version = null //teamcity plugin file name should be without version suffix
+}
 
 dependencies {
     compile project(':allure-teamcity-common')

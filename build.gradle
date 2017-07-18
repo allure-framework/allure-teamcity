@@ -5,12 +5,30 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.rodm:gradle-teamcity-plugin:0.10'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.github.rodm:gradle-teamcity-plugin:1.0'
+        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
 ext {
+    gradleScriptDir = "${rootProject.projectDir}/gradle"
     teamcityVersion = '9.1'
+}
+
+apply from: "${gradleScriptDir}/bintray.gradle"
+apply from: "${gradleScriptDir}/release.gradle"
+
+configure(rootProject) {
+
+    description = "Allure for TeamCity"
+
+    task build() {
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '4.0.1'
+    }
 }
 
 subprojects {
@@ -27,8 +45,4 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.1'
 }
