@@ -1,0 +1,26 @@
+apply plugin: "com.github.rodm.teamcity-agent"
+
+teamcity {
+    version = '9.1'
+    descriptor {
+        pluginDeployment {
+            useSeparateClassloader = true
+        }
+    }
+}
+
+agentPlugin.version = null
+agentPlugin.baseName = name
+
+dependencies {
+    compile project(':allure-teamcity-common')
+
+    compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+    compile 'commons-logging:commons-logging:1.1.3'
+    compile 'commons-httpclient:commons-httpclient:3.1'
+
+    provided 'com.intellij:openapi:7.0.3'
+    provided 'org.jetbrains.teamcity:agent-api:9.1'
+    provided 'org.jetbrains.teamcity.internal:agent:9.1'
+
+}

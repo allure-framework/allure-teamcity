@@ -1,0 +1,21 @@
+apply plugin: "com.github.rodm.teamcity-server"
+
+teamcity {
+    version = '9.1'
+    server {
+        descriptor = project.file('teamcity-plugin.xml')
+        tokens = [Version: project.version]
+    }
+}
+
+dependencies {
+    agent project(path: ':allure-teamcity-agent', configuration: 'plugin')
+
+    compile project(':allure-teamcity-common')
+
+    compile 'org.apache.commons:commons-lang3:3.4'
+    provided 'javax.servlet:jstl:1.1.2'
+}
+
+serverPlugin.version = null
+serverPlugin.baseName = 'allure-teamcity'
