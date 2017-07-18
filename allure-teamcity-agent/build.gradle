@@ -10,8 +10,8 @@ teamcity {
 }
 
 agentPlugin {
-    version = null
     baseName = name
+    version = null //teamcity plugin file name should be without version suffix
 }
 
 dependencies {

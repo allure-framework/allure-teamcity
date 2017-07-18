@@ -3,7 +3,7 @@ pipeline {
     parameters {
         booleanParam(name: 'RELEASE', defaultValue: false, description: 'Perform release?')
         string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release version')
-        string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next version (without SNAPSHOT)')
+        string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next version (without SNAPSHOT suffix)')
     }
     stages {
         stage('Build') {

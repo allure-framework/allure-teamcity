@@ -11,8 +11,8 @@ teamcity {
 }
 
 serverPlugin {
-    version = null
     baseName = project.parent.name
+    version = null //teamcity plugin file name should be without version suffix
 }
 
 configurations.archives.artifacts.removeAll { it.archiveTask.is jar }

@@ -31,10 +31,6 @@ configure(rootProject) {
     }
 }
 
-allprojects {
-
-}
-
 subprojects {
     apply plugin: "java"
 
