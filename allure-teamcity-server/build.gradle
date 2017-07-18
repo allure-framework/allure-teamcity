@@ -1,12 +1,21 @@
 apply plugin: "com.github.rodm.teamcity-server"
 
+apply from: "${gradleScriptDir}/bintray.gradle"
+
 teamcity {
-    version = '9.1'
+    version = teamcityVersion
     server {
         descriptor = project.file('teamcity-plugin.xml')
         tokens = [Version: project.version]
     }
 }
+
+serverPlugin {
+    version = null
+    baseName = project.parent.name
+}
+
+configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
 
 dependencies {
     agent project(path: ':allure-teamcity-agent', configuration: 'plugin')
@@ -16,6 +25,3 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     provided 'javax.servlet:jstl:1.1.2'
 }
-
-serverPlugin.version = null
-serverPlugin.baseName = 'allure-teamcity'
