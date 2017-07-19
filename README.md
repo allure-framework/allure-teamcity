@@ -1,14 +1,48 @@
-# Allure TeamCity Plugin
+[license]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License 2.0"
+[blog]: https://qameta.io/blog
+[gitter]: https://gitter.im/allure-framework/allure-core
+[gitter-ru]: https://gitter.im/allure-framework/allure-ru
+[twitter]: https://twitter.com/QametaSoftware "Qameta Software"
+[twitter-team]: https://twitter.com/QametaSoftware/lists/team/members "Team"
+[build]: https://ci.qameta.io/job/allure-teamcity/job/master "Build"
+[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-teamcity/master
+[bintray]: https://bintray.com/qameta/generic/allure-teamcity "Bintray"
+[bintray-badge]: https://img.shields.io/bintray/v/qameta/generic/allure-teamcity.svg?style=flat
+[release]: https://github.com/allure-framework/allure-teamcity/releases/latest "Latest release"
+[release-badge]: https://img.shields.io/github/release/allure-framework/allure-teamcity.svg?style=flat
+[CONTRIBUTING.md]: .github/CONTRIBUTING.md
+[CODE_OF_CONDUCT.md]: CODE_OF_CONDUCT.md
+[docs]: https://docs.qameta.io/allure/2.0/
 
-[![release](http://github-release-version.herokuapp.com/github/allure-framework/allure-teamcity-plugin/release.svg?style=flat)](https://github.com/allure-framework/allure-teamcity-plugin/releases/latest) [![build](https://img.shields.io/jenkins/s/http/ci.qatools.ru/allure-teamcity-plugin_master-deploy.svg?style=flat)](http://ci.qatools.ru/job/allure-teamcity-plugin_master-deploy/lastBuild/)
+# Allure TeamCity integration [![build-badge][]][build] [![release-badge][]][release] [![bintray-badge][]][bintray]
 
-## Getting Started
+Allure Framework is a flexible lightweight multi-language test report tool that not only 
+shows a very concise representation of what have been tested in a neat web report form, 
+but allows everyone participating in the development process to extract maximum of useful 
+information from everyday execution of tests.
 
-* [Documentation](http://wiki.qatools.ru/display/AL/Allure+TeamCity+Plugin)
-* [Issue Tracking](https://github.com/allure-framework/allure-teamcity-plugin/issues?labels=&milestone=&page=1&state=open)
-* [Releases and Changelog](https://github.com/allure-framework/allure-teamcity-plugin/releases)
+## Download 
 
-## Contact us
-* Gitter chat room: [https://gitter.im/allure-framework/allure-core](https://gitter.im/allure-framework/allure-core)
-* Mailing list: [allure@yandex-team.ru](mailto:allure@yandex-team.ru)
-* StackOverflow tag: [Allure](http://stackoverflow.com/questions/tagged/allure)
+You can grab the latest version of Allure TeamCity from [bintray][bintray]. 
+
+## Documentation 
+
+All the documentation is available [on our site][docs].
+    
+## Contributing 
+
+Please see [CONTRIBUTING.md][]
+
+## Staying in Touch
+
+Follow [@QametaSoftware][twitter] and its [team members][twitter-team] on Twitter. In-depth articles can
+be found at [Qameta Blog][blog]. Also feel free to join our 
+[Gitter room][gitter] ([ru][gitter-ru]).
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct][CODE_OF_CONDUCT.md]. By participating in this project you agree to abide by its terms.
+
+## License
+
+The Allure Framework is released under version 2.0 of the [Apache License][license].
