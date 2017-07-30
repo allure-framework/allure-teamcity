@@ -10,14 +10,19 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 
 
+import static io.qameta.allure.teamcity.utils.ZipUtils.listEntries;
 import static java.lang.String.format;
 import static io.qameta.allure.teamcity.AllureConstants.*;
 
@@ -123,17 +128,52 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Write the history file to results directory.
      */
     private void copyHistory() {
-        Path source = reportDirectory.resolve("history");
-        if (Files.exists(source) && Files.isDirectory(source)) {
-            Path destination = resultsDirectory.resolve("history");
-            try {
-                FileUtils.copyDirectory(source.toFile(), destination.toFile());
-            } catch (IOException e) {
-                getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
-                getLogger().exception(e);
+
+        try {
+            Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
+            URL lastFinishedArtifactUrl = new URL(getLastFinishedArtifactUrl());
+
+            String passwdstring = getServerAuthentication();
+            String encoding = Base64.getUrlEncoder().encodeToString(passwdstring.getBytes("utf-8"));
+
+            URLConnection uc = lastFinishedArtifactUrl.openConnection();
+            uc.setRequestProperty("Authorization", "Basic " + encoding);
+            InputStream inputStream = uc.getInputStream();
+            Files.copy(inputStream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
+            try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
+                copyHistoryToResultsPath(archive);
             }
+        } catch (Exception e) {
+            getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
+            getLogger().exception(e);
         }
 
+    }
+
+    private void copyHistoryToResultsPath(ZipFile archive)
+            throws IOException, InterruptedException {
+        for (final ZipEntry historyEntry : listEntries(archive, "history")) {
+            final String historyFile = historyEntry.getName();
+
+            if (!historyEntry.isDirectory()) {
+                try (InputStream entryStream = archive.getInputStream(historyEntry)) {
+                    final Path historyCopy = resultsDirectory.resolve(historyFile);
+                    historyCopy.toFile().createNewFile();
+                    try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(historyCopy.toString()))) {
+                        byte[] bytesIn = new byte[4096];
+                        int read = 0;
+                        while ((read = entryStream.read(bytesIn)) != -1) {
+                            bos.write(bytesIn, 0, read);
+                        }
+                    }
+                }
+            } else {
+                File dir = new File(resultsDirectory.resolve(historyFile).toString());
+                dir.mkdir();
+            }
+
+
+        }
     }
 
     /**
@@ -154,6 +194,29 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @Override
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
         artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+    }
+
+    /**
+     * Returns the build's artifacts url for the last finished build.
+     *
+     * @see #getTeamcityBaseUrl()
+     */
+    @NotNull
+    private String getLastFinishedArtifactUrl() {
+        return format(
+                "%s/repository/downloadAll/%s/.lastFinished/artifacts.zip",
+                getTeamcityBaseUrl(),
+                getBuild().getBuildTypeExternalId()
+        );
+    }
+
+    @NotNull
+    private String getServerAuthentication() {
+        return format(
+                "%s:%s",
+                getSystemProperties().get("teamcity.auth.userId"),
+                getSystemProperties().get("teamcity.auth.password")
+        );
     }
 
     /**
