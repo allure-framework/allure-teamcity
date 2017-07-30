@@ -10,10 +10,18 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -157,15 +165,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
             if (!historyEntry.isDirectory()) {
                 try (InputStream entryStream = archive.getInputStream(historyEntry)) {
-                    final Path historyCopy = resultsDirectory.resolve(historyFile);
-                    historyCopy.toFile().createNewFile();
-                    try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(historyCopy.toString()))) {
-                        byte[] bytesIn = new byte[4096];
-                        int read = 0;
-                        while ((read = entryStream.read(bytesIn)) != -1) {
-                            bos.write(bytesIn, 0, read);
-                        }
-                    }
+                    Files.copy(entryStream, resultsDirectory.resolve(historyFile));
                 }
             } else {
                 File dir = new File(resultsDirectory.resolve(historyFile).toString());
