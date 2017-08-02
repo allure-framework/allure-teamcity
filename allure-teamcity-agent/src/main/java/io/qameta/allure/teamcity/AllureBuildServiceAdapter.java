@@ -184,8 +184,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String buildUrl = getBuildUrl();
         String buildNumber = getBuildNumber();
         String reportUrl = getArtifactsUrl();
-
-
+        
         String buildName = format("%s / %s # %s",
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
         new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
