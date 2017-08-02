@@ -8,6 +8,23 @@ teamcity {
         descriptor = project.file('teamcity-plugin.xml')
         tokens = [Version: project.version]
     }
+
+    environments {
+        teamcity9 {
+            version = '9.1'
+            homeDir = file("$teamcityDir/${version}")
+            dataDir = file("$teamcityDir/${version}/.datadir")
+            serverOptions = serverOpts
+        }
+
+        teamcity10 {
+            version = '10.0.2'
+            homeDir = file("$teamcityDir/TeamCity-${version}")
+            dataDir = file("$teamcityDir/data/${version}")
+            serverOptions = serverOpts
+        }
+    }
+
 }
 
 serverPlugin {

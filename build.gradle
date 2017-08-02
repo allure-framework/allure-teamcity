@@ -14,6 +14,11 @@ buildscript {
 ext {
     gradleScriptDir = "${rootProject.projectDir}/gradle"
     teamcityVersion = '9.1'
+    teamcityDir = "${rootProject.projectDir}/.teamcity"
+    serverOpts = "-DTC.res.disableAll=true " +
+            "-Dteamcity.development.mode=true " +
+            "-Dteamcity.development.shadowCopyClasses=true " +
+            "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50055"
 }
 
 apply from: "${gradleScriptDir}/bintray.gradle"
