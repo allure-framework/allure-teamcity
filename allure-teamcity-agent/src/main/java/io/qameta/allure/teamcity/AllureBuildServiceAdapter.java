@@ -10,9 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
@@ -140,6 +139,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         try {
             Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
             URL lastFinishedArtifactUrl = new URL(getLastFinishedArtifactUrl());
+            getLogger().message(lastFinishedArtifactUrl.toString());
 
             String passwdstring = getServerAuthentication();
             String encoding = Base64.getUrlEncoder().encodeToString(passwdstring.getBytes("utf-8"));
@@ -203,11 +203,16 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getLastFinishedArtifactUrl() {
-        return format(
+        StringBuilder artifactUrl = new StringBuilder();
+        artifactUrl.append(format(
                 "%s/repository/downloadAll/%s/.lastFinished/artifacts.zip",
                 getTeamcityBaseUrl(),
-                getBuild().getBuildTypeExternalId()
-        );
+                getBuild().getBuildTypeExternalId()));
+        String branch = getConfigParameters().get("teamcity.build.branch");
+        if (Objects.nonNull(branch)) {
+            artifactUrl.append(format("?branch=%s", branch));
+        }
+        return artifactUrl.toString();
     }
 
     @NotNull
