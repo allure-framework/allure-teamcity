@@ -182,9 +182,12 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private void addExecutorInfo() throws IOException {
         String rootUrl = getTeamcityBaseUrl();
         String buildUrl = getBuildUrl();
-        String buildOrder = getBuildId();
+        String buildNumber = getBuildNumber();
         String reportUrl = getArtifactsUrl();
-        new AddExecutorInfo(rootUrl, "#" + getBuild().getBuildId(), buildUrl, buildOrder, reportUrl)
+        
+        String buildName = format("%s / %s # %s",
+                getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
+        new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
                 .invoke(resultsDirectory);
     }
 
@@ -239,8 +242,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         );
     }
 
-    private String getBuildId() {
-        return getBuild().getBuildId() + "";
+    private String getBuildNumber() {
+        return getBuild().getBuildNumber();
     }
 
     /**

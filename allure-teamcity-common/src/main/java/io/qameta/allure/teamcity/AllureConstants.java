@@ -13,12 +13,12 @@ public final class AllureConstants {
     static final String RESULTS_DIRECTORY = "allure.result.directory";
 
     /** The default directory with allure results. */
-    static final String RESULTS_DIRECTORY_DEFAULT = "allure-results/";
+    static final String RESULTS_DIRECTORY_DEFAULT = "allure-results";
 
     static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
 
     /** The default subdirectory (or subdirectories) to put generated report into. */
-    static final String REPORT_PATH_PREFIX_DEFAULT = "allure-report/";
+    static final String REPORT_PATH_PREFIX_DEFAULT = "allure-report";
 
     /**
      * The name of Allure commandline tool.
