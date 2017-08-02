@@ -10,9 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -204,9 +202,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @NotNull
     private String getLastFinishedArtifactUrl() {
         return format(
-                "%s/repository/downloadAll/%s/.lastFinished/artifacts.zip",
+                "%s/repository/downloadAll/%s/.lastFinished/artifacts.zip?branch=%s",
                 getTeamcityBaseUrl(),
-                getBuild().getBuildTypeExternalId()
+                getBuild().getBuildTypeExternalId(),
+                getConfigParameters().get("teamcity.build.branch")
         );
     }
 
