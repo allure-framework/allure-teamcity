@@ -14,8 +14,8 @@ import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -141,21 +141,20 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private void publishAllureReportArchive() throws IOException {
         Path reportArchive = getWorkingDirectoryPath().resolve("allure-report.zip");
-        Path base = reportArchive.getParent();
         List<Path> reportFiles = Files.walk(reportDirectory)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
-        ZipUtils.zip(reportArchive, base, reportFiles);
+        ZipUtils.zip(reportArchive, reportDirectory.getParent(), reportFiles);
         artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
     }
 
     private void publishAllureHistoryArchive() throws IOException {
-        Path historyArchive = getWorkingDirectoryPath().resolve("history.zip");
         Path historyDirectory = reportDirectory.resolve("history");
-        List<Path> reportFiles = Files.walk(historyDirectory)
+        Path historyArchive = getWorkingDirectoryPath().resolve("history.zip");
+        List<Path> historyFiles = Files.walk(historyDirectory)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
-        ZipUtils.zip(historyArchive, historyDirectory, reportFiles);
+        ZipUtils.zip(historyArchive, historyDirectory.getParent(), historyFiles);
         artifactsWatcher.addNewArtifactsPath(historyArchive.toString() + " => " + ALLURE_ARTIFACT_META_LOCATION);
     }
 
@@ -173,43 +172,58 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Write the history file to results directory.
      */
     private void copyHistory() {
-
         try {
-            Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
-            URL lastFinishedArtifactUrl = new URL(getLastFinishedArtifactUrl());
-            getLogger().message(lastFinishedArtifactUrl.toString());
-
-            String passwdstring = getServerAuthentication();
-            String encoding = Base64.getUrlEncoder().encodeToString(passwdstring.getBytes("utf-8"));
-
-            URLConnection uc = lastFinishedArtifactUrl.openConnection();
-            uc.setRequestProperty("Authorization", "Basic " + encoding);
-            InputStream inputStream = uc.getInputStream();
-            Files.copy(inputStream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
-            try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
-                copyHistoryToResultsPath(archive);
-            }
-        } catch (Exception e) {
+            copyHistoryFormLastFinishedBuild(new URL(getLastFinishedArtifactUrl(ALLURE_ARTIFACT_HISTORY_LOCATION)));
+            copyHistoryFormLastFinishedBuild(new URL(getLastFinishedArtifactUrl()));
+        } catch (IOException e) {
             getLogger().message("Cannot copy history file. Reason: " + e.getMessage());
             getLogger().exception(e);
         }
-
     }
 
-    private void copyHistoryToResultsPath(ZipFile archive) throws IOException {
+    private void copyHistoryFormLastFinishedBuild(URL url) throws IOException {
+        getLogger().message(format("Search allure history information in [%s] ...", url.toString()));
+        Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
+
+        Path historyDirectory = resultsDirectory.resolve("history");
+        Files.createDirectories(historyDirectory);
+
+        if (Files.list(historyDirectory).count() != 0) {
+            getLogger().message("Allure history information already exists ...");
+            return;
+        }
+
+        String password = getServerAuthentication();
+        String encoding = Base64.getUrlEncoder().encodeToString(password.getBytes("utf-8"));
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Authorization", "Basic " + encoding);
+        connection.connect();
+
+        boolean isArtifactMissing = connection.getResponseCode() != 200;
+        if (isArtifactMissing) {
+            getLogger().message(format("Allure history information missing in [%s] ...", url.toString()));
+        }
+
+        getLogger().message(format("Coping allure history information from [%s] ...", url.toString()));
+        InputStream stream = connection.getInputStream();
+        Files.copy(stream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
+        try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
+            copyHistoryToResultsPath(archive, resultsDirectory);
+        }
+    }
+
+    private void copyHistoryToResultsPath(ZipFile archive, Path resultsDirectory) throws IOException {
         for (final ZipEntry historyEntry : listEntries(archive, "history")) {
             final String historyFile = historyEntry.getName();
 
-            if (!historyEntry.isDirectory()) {
+            if (historyEntry.isDirectory()) {
+                Files.createDirectories(resultsDirectory.resolve(historyFile));
+            } else {
                 try (InputStream entryStream = archive.getInputStream(historyEntry)) {
                     Files.copy(entryStream, resultsDirectory.resolve(historyFile));
                 }
-            } else {
-                File dir = new File(resultsDirectory.resolve(historyFile).toString());
-                dir.mkdir();
             }
-
-
         }
     }
 
@@ -220,7 +234,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String rootUrl = getTeamcityBaseUrl();
         String buildUrl = getBuildUrl();
         String buildNumber = getBuildNumber();
-        String reportUrl = getArtifactsUrl();
+        String reportUrl = getAllureReportUrl();
 
         String buildName = format("%s / %s # %s",
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
@@ -252,6 +266,21 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return artifactUrl.toString();
     }
 
+    private String getLastFinishedArtifactUrl(String name) {
+        return getArtifactUrl(".lastFinished", name);
+    }
+
+    private String getArtifactUrl(String build, String name) {
+        StringBuilder artifactUrl = new StringBuilder();
+        artifactUrl.append(format("%s/repository/download/%s/%s/%s",
+                getTeamcityBaseUrl(), getBuild().getBuildTypeExternalId(), build, name));
+        String branch = getConfigParameters().get("teamcity.build.branch");
+        if (Objects.nonNull(branch)) {
+            artifactUrl.append(format("?branch=%s", branch));
+        }
+        return artifactUrl.toString();
+    }
+
     @NotNull
     private String getServerAuthentication() {
         return format(
@@ -267,12 +296,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * @see #getTeamcityBaseUrl()
      */
     @NotNull
-    private String getArtifactsUrl() {
-        return format(
-                "%srepository/download/%s/%s:id/index.html",
-                getTeamcityBaseUrl(),
-                getBuild().getBuildTypeExternalId(),
-                getBuild().getBuildId()
+    private String getAllureReportUrl() {
+        return getArtifactUrl(
+                format("%s:id", getBuild().getBuildId()),
+                "allure-report.zip!/allure-report/index.html"
         );
     }
 
@@ -324,11 +351,12 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String executableFile = path + File.separatorChar + "bin" + File.separatorChar + executableName;
         File file = new File(executableFile);
 
-        if (!file.exists())
+        if (!file.exists()) {
             throw new RunBuildException("Cannot find executable \'" + executableFile + "\'");
-        if (!file.setExecutable(true))
+        }
+        if (!file.setExecutable(true)) {
             buildLogger.message("Cannot set file: " + executableFile + " executable.");
-
+        }
         return file.getAbsolutePath();
 
     }
