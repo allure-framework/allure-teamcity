@@ -35,7 +35,7 @@ import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
- *         Date: 06.08.15
+ * Date: 06.08.15
  */
 class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
@@ -79,30 +79,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @Override
     public void afterInitialized() throws RunBuildException {
-
         workingDirectory = getCheckoutDirectory().getAbsolutePath();
         resultsDirectory = Paths.get(workingDirectory, getRunnerParameters().get(RESULTS_DIRECTORY));
         clientDirectory = getClientDirectory(Paths.get(getToolPath(ALLURE_TOOL_NAME)));
         reportDirectory = Paths.get(workingDirectory, getRunnerParameters().get(REPORT_PATH_PREFIX));
-
-    }
-
-
-    private static Path getClientDirectory(Path client) throws RunBuildException {
-        DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path file) throws IOException {
-                return Files.isDirectory(file);
-            }
-        };
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(client, filter)) {
-            for (Path path : stream)
-                if (path.getFileName().toString().startsWith("allure"))
-                    return path;
-        } catch (IOException e) {
-            throw new RunBuildException("Cannot find allure tool folder.", e);
-        }
-        return client;
     }
 
     /**
@@ -111,10 +91,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @Override
     public void beforeProcessStarted() throws RunBuildException {
         if (Files.notExists(resultsDirectory)) {
-            throw new RunBuildException(format(
-                    "The results directory <%s> doesn't exists.",
-                    resultsDirectory
-            ));
+            throw new RunBuildException(format("The results directory <%s> doesn't exists.", resultsDirectory));
         }
         copyHistory();
         try {
@@ -124,6 +101,36 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
             throw new RunBuildException(e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NotNull
+    @Override
+    public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
+
+        BuildProgressLogger buildLogger = getLogger();
+        BuildRunnerContext buildRunnerContext = getRunnerContext();
+        Map<String, String> programEnvironmentVariables = buildRunnerContext.getBuildParameters().getEnvironmentVariables();
+        String programPath = getProgramPath();
+        List<String> programArgs = getProgramArgs();
+
+        buildLogger.message("Program environment variables: " + programEnvironmentVariables.toString());
+        buildLogger.message("Program working directory: " + workingDirectory);
+        buildLogger.message("Program path: " + programPath);
+        buildLogger.message("Program args: " + programArgs.toString());
+
+        return new SimpleProgramCommandLine(programEnvironmentVariables, workingDirectory, programPath, programArgs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterProcessSuccessfullyFinished() {
+        artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+    }
+
 
     private void clearReport() throws IOException {
         if (Files.exists(reportDirectory)) {
@@ -158,8 +165,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     }
 
-    private void copyHistoryToResultsPath(ZipFile archive)
-            throws IOException, InterruptedException {
+    private void copyHistoryToResultsPath(ZipFile archive) throws IOException {
         for (final ZipEntry historyEntry : listEntries(archive, "history")) {
             final String historyFile = historyEntry.getName();
 
@@ -184,19 +190,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String buildUrl = getBuildUrl();
         String buildNumber = getBuildNumber();
         String reportUrl = getArtifactsUrl();
-        
+
         String buildName = format("%s / %s # %s",
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
         new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
                 .invoke(resultsDirectory);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void afterProcessSuccessfullyFinished() throws RunBuildException {
-        artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
     }
 
     /**
@@ -270,27 +268,6 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
-    @Override
-    public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
-
-        BuildProgressLogger buildLogger = getLogger();
-        BuildRunnerContext buildRunnerContext = getRunnerContext();
-        Map<String, String> programEnvironmentVariables = buildRunnerContext.getBuildParameters().getEnvironmentVariables();
-        String programPath = getProgramPath();
-        List<String> programArgs = getProgramArgs();
-
-        buildLogger.message("Program environment variables: " + programEnvironmentVariables.toString());
-        buildLogger.message("Program working directory: " + workingDirectory);
-        buildLogger.message("Program path: " + programPath);
-        buildLogger.message("Program args: " + programArgs.toString());
-
-        return new SimpleProgramCommandLine(programEnvironmentVariables, workingDirectory, programPath, programArgs);
-    }
-
     private List<String> getProgramArgs() {
         List<String> list = new ArrayList<>();
 
@@ -319,6 +296,20 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return file.getAbsolutePath();
 
     }
+
+    private static Path getClientDirectory(Path client) throws RunBuildException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(client, Files::isDirectory)) {
+            for (Path path : stream) {
+                if (path.getFileName().toString().startsWith("allure")) {
+                    return path;
+                }
+            }
+        } catch (IOException e) {
+            throw new RunBuildException("Cannot find allure tool folder.", e);
+        }
+        return client;
+    }
+
 
     @NotNull
     private static String getExecutableName() {
