@@ -9,6 +9,9 @@ import jetbrains.buildServer.agent.ToolProvider;
 import jetbrains.buildServer.agent.ToolProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.util.Optional;
+
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
  *         Date: 11.08.15
@@ -38,10 +41,10 @@ public class AllureToolProvider implements ToolProvider {
     @Override
     public String getPath(@NotNull final String toolName) {
         BundledTool tool = bundledRegistry.findTool(toolName);
-        if (tool == null) {
-            throw new ToolCannotBeFoundException("Could not locate Allure installation.");
-        }
-        return tool.getRootPath().getPath();
+        return Optional.ofNullable(tool)
+                .map(BundledTool::getRootPath)
+                .map(File::getPath)
+                .orElseThrow(() -> new ToolCannotBeFoundException("Could not locate Allure installation."));
     }
 
     /**
