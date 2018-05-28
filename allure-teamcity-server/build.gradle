@@ -10,15 +10,8 @@ teamcity {
     }
 
     environments {
-        teamcity9 {
-            version = '9.1'
-            homeDir = file("$teamcityDir/${version}")
-            dataDir = file("$teamcityDir/${version}/.datadir")
-            serverOptions = serverOpts
-        }
-
-        teamcity10 {
-            version = '10.0.2'
+        Teamcity2017 {
+            version = '2017.1.5'
             homeDir = file("$teamcityDir/TeamCity-${version}")
             dataDir = file("$teamcityDir/data/${version}")
             serverOptions = serverOpts
