@@ -203,13 +203,15 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         boolean isArtifactMissing = connection.getResponseCode() != 200;
         if (isArtifactMissing) {
             getLogger().message(format("Allure history information missing in [%s] ...", url.toString()));
+            return;
         }
 
         getLogger().message(format("Coping allure history information from [%s] ...", url.toString()));
-        InputStream stream = connection.getInputStream();
-        Files.copy(stream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
-        try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
-            copyHistoryToResultsPath(archive, resultsDirectory);
+        try (InputStream stream = connection.getInputStream()) {
+            Files.copy(stream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
+            try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
+                copyHistoryToResultsPath(archive, resultsDirectory);
+            }
         }
     }
 
