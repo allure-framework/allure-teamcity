@@ -9,4 +9,6 @@ target
 .gradle
 build
 
+# TeamCity
+downloads
 .teamcity
