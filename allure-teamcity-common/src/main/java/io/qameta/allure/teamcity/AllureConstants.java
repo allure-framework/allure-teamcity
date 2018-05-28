@@ -25,6 +25,11 @@ public final class AllureConstants {
      */
     static final String ALLURE_TOOL_NAME = "allure-commandline";
 
+    /**
+     * The default directory with allure meta files.
+     */
+    static final String ALLURE_ARTIFACT_META_LOCATION = ".teamcity/allure/";
+
     AllureConstants() {
     }
 }

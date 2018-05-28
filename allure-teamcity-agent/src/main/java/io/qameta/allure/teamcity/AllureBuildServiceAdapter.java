@@ -1,5 +1,6 @@
 package io.qameta.allure.teamcity;
 
+import io.qameta.allure.teamcity.utils.ZipUtils;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.agent.BuildRunnerContext;
@@ -25,6 +26,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
@@ -80,9 +82,9 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @Override
     public void afterInitialized() throws RunBuildException {
         workingDirectory = getCheckoutDirectory().getAbsolutePath();
-        resultsDirectory = Paths.get(workingDirectory, getRunnerParameters().get(RESULTS_DIRECTORY));
+        resultsDirectory = getWorkingDirectoryPath().resolve(getRunnerParameters().get(RESULTS_DIRECTORY));
         clientDirectory = getClientDirectory(Paths.get(getToolPath(ALLURE_TOOL_NAME)));
-        reportDirectory = Paths.get(workingDirectory, getRunnerParameters().get(REPORT_PATH_PREFIX));
+        reportDirectory = getWorkingDirectoryPath().resolve(getRunnerParameters().get(REPORT_PATH_PREFIX));
     }
 
     /**
@@ -127,10 +129,39 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * {@inheritDoc}
      */
     @Override
-    public void afterProcessSuccessfullyFinished() {
-        artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+    public void afterProcessSuccessfullyFinished() throws RunBuildException {
+        try {
+            publishAllureReportArchive();
+            publishAllureHistoryArchive();
+            publishAllureSummary();
+        } catch (IOException e) {
+            throw new RunBuildException(e);
+        }
     }
 
+    private void publishAllureReportArchive() throws IOException {
+        Path reportArchive = getWorkingDirectoryPath().resolve("allure-report.zip");
+        Path base = reportArchive.getParent();
+        List<Path> reportFiles = Files.walk(reportDirectory)
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
+        ZipUtils.zip(reportArchive, base, reportFiles);
+        artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
+    }
+
+    private void publishAllureHistoryArchive() throws IOException {
+        Path historyArchive = getWorkingDirectoryPath().resolve("history.zip");
+        Path historyDirectory = reportDirectory.resolve("history");
+        List<Path> reportFiles = Files.walk(historyDirectory)
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
+        ZipUtils.zip(historyArchive, historyDirectory, reportFiles);
+        artifactsWatcher.addNewArtifactsPath(historyArchive.toString() + " => " + ALLURE_ARTIFACT_META_LOCATION);
+    }
+
+    private void publishAllureSummary() throws IOException {
+
+    }
 
     private void clearReport() throws IOException {
         if (Files.exists(reportDirectory)) {
@@ -195,6 +226,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
         new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
                 .invoke(resultsDirectory);
+    }
+
+    @NotNull
+    private Path getWorkingDirectoryPath() {
+        return Paths.get(workingDirectory);
     }
 
     /**
