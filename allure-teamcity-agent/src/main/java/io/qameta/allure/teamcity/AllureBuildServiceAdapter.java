@@ -1,5 +1,6 @@
 package io.qameta.allure.teamcity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.teamcity.utils.ZipUtils;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProgressLogger;
@@ -159,7 +160,18 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
     private void publishAllureSummary() throws IOException {
+        Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve("summary.json");
+        ObjectMapper mapper = new ObjectMapper();
 
+        Summary summary = mapper.readValue(summaryWidgetPath.toFile(), Summary.class);
+        summary.setUrl(getAllureReportUrl());
+
+        Path summaryOutputPath = getWorkingDirectoryPath().resolve("summary.json");
+        String json = mapper.writeValueAsString(summary);
+        Files.write(summaryOutputPath, json.getBytes());
+
+        artifactsWatcher.addNewArtifactsPath(summaryOutputPath + "=>"
+                + AllureConstants.ALLURE_ARTIFACT_META_LOCATION);
     }
 
     private void clearReport() throws IOException {
