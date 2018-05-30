@@ -1,6 +1,7 @@
 #Idea
 .idea
 *.iml
+out
 
 #Maven
 target
@@ -9,4 +10,6 @@ target
 .gradle
 build
 
+# TeamCity
+downloads
 .teamcity
