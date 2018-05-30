@@ -141,7 +141,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
     private void publishAllureReportArchive() throws IOException {
-        Path reportArchive = getWorkingDirectoryPath().resolve("allure-report.zip");
+        Path reportArchive = getAgentTempDirectoryPath().resolve("allure-report.zip");
         List<Path> reportFiles = Files.walk(reportDirectory)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
@@ -150,8 +150,9 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
     private void publishAllureHistoryArchive() throws IOException {
+        Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
+
         Path historyDirectory = reportDirectory.resolve("history");
-        Path historyArchive = getWorkingDirectoryPath().resolve("history.zip");
         List<Path> historyFiles = Files.walk(historyDirectory)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
@@ -160,13 +161,14 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
     private void publishAllureSummary() throws IOException {
+        Path summaryOutputPath = getAgentTempDirectoryPath().resolve("summary.json");
+
         Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve("summary.json");
         ObjectMapper mapper = new ObjectMapper();
 
         Summary summary = mapper.readValue(summaryWidgetPath.toFile(), Summary.class);
         summary.setUrl(getAllureReportUrl());
 
-        Path summaryOutputPath = getWorkingDirectoryPath().resolve("summary.json");
         String json = mapper.writeValueAsString(summary);
         Files.write(summaryOutputPath, json.getBytes());
 
@@ -254,11 +256,6 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
         new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
                 .invoke(resultsDirectory);
-    }
-
-    @NotNull
-    private Path getWorkingDirectoryPath() {
-        return Paths.get(workingDirectory);
     }
 
     /**
@@ -393,4 +390,14 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private static String getExecutableName() {
         return SystemUtils.IS_OS_WINDOWS ? ALLURE_EXEC_NAME + ".bat" : ALLURE_EXEC_NAME;
     }
+
+    @NotNull
+    private Path getWorkingDirectoryPath() {
+        return Paths.get(workingDirectory);
+    }
+
+    private Path getAgentTempDirectoryPath() {
+        return getAgentTempDirectory().toPath();
+    }
+
 }
