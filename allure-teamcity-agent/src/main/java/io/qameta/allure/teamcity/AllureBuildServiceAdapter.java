@@ -138,7 +138,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
         try {
             publishAllureReport();
-            publishAllureHistoryArchive();
+            publishAllureHistory();
             publishAllureSummary();
         } catch (IOException e) {
             throw new RunBuildException(e);
@@ -159,7 +159,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         }
     }
 
-    private void publishAllureHistoryArchive() throws IOException {
+    private void publishAllureHistory() throws IOException {
         Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
 
         Path historyDirectory = reportDirectory.resolve("history");
