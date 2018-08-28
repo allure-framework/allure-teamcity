@@ -8,14 +8,16 @@ package io.qameta.allure.teamcity;
  */
 public final class AllureConstants {
 
-    static final String RUN_TYPE = "allureReportGeneratorRunner";
+    public static final String RESULTS_DIRECTORY = "allure.result.directory";
 
-    static final String RESULTS_DIRECTORY = "allure.result.directory";
+    public static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
+
+    public static final String PUBLISH_MODE = "allure.publish.mode";
+
+    static final String RUN_TYPE = "allureReportGeneratorRunner";
 
     /** The default directory with allure results. */
     static final String RESULTS_DIRECTORY_DEFAULT = "allure-results";
-
-    static final String REPORT_PATH_PREFIX = "allure.report.path.prefix";
 
     /** The default subdirectory (or subdirectories) to put generated report into. */
     static final String REPORT_PATH_PREFIX_DEFAULT = "allure-report";

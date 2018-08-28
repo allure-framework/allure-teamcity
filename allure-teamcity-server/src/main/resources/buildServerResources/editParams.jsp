@@ -1,27 +1,43 @@
-<%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
+<%@ include file="/include.jsp" %>
 <%@ taglib prefix="l" tagdir="/WEB-INF/tags/layout" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="io.qameta.allure.teamcity.AllureConstants" %>
+<%@ page import="io.qameta.allure.teamcity.AllurePublishMode" %>
 
 <tr id="allure.result.directory.container">
-    <th><label for="allure.result.directory">Allure result directory:</label></th>
+    <th><label for="allure.result.directory">Result directory:</label></th>
     <td>
-        <props:textProperty name="allure.result.directory" className="longField"/>
+        <props:textProperty name="<%=AllureConstants.RESULTS_DIRECTORY%>" className="longField"/>
         <span class="smallNote">
-            Specify the directory with allure results relative from build directory. An example
-            <strong>allure-results/</strong>
+            Specify the directory with allure results <b>relative</b> from build directory. An example
+            <strong>build/allure-results</strong>
         </span>
     </td>
 </tr>
 
 <tr id="allure.report.path.prefix.container">
-    <th><label for="allure.report.path.prefix">Report artifact subdirectory:</label></th>
+    <th><label for="allure.report.path.prefix">Report directory:</label></th>
     <td>
-        <props:textProperty name="allure.report.path.prefix" className="longField"/>
+        <props:textProperty name="<%=AllureConstants.REPORT_PATH_PREFIX%>" className="longField"/>
         <span class="smallNote">
-            The subdirectory (or subdirectories) to put generated report into. An example
-             <strong>allure-report/</strong>
+            The directory <b>relative</b> from build directory to put generated report into. An example
+             <strong>allure-report</strong>
+        </span>
+    </td>
+</tr>
+
+<tr id="allure.report.mode">
+    <th><label for="allure.report.path.prefix">Publish mode:</label></th>
+    <td>
+        <props:radioButtonProperty name="<%=AllureConstants.PUBLISH_MODE%>" value="<%=AllurePublishMode.ARCHIVE.toString()%>"/> Publish archived report (Recommended)
+        <br>
+        <props:radioButtonProperty name="<%=AllureConstants.PUBLISH_MODE%>" value="<%=AllurePublishMode.PLAIN.toString()%>"/> Publish plain report
+        <span class="smallNote">
+            Archived report published faster and takes less space
+            but may be slower when you are using external storage (S3, for example)
         </span>
     </td>
 </tr>
