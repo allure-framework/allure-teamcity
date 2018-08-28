@@ -27,6 +27,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
@@ -70,6 +71,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     private Path clientDirectory;
 
+    private AllurePublishMode publishMode;
+
     /**
      * Creates an instance of adapter.
      */
@@ -86,6 +89,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         resultsDirectory = getWorkingDirectoryPath().resolve(getRunnerParameters().get(RESULTS_DIRECTORY));
         clientDirectory = getClientDirectory(Paths.get(getToolPath(ALLURE_TOOL_NAME)));
         reportDirectory = getWorkingDirectoryPath().resolve(getRunnerParameters().get(REPORT_PATH_PREFIX));
+        publishMode = Optional.ofNullable(getRunnerParameters().get(PUBLISH_MODE)).map(AllurePublishMode::valueOf)
+                .orElse(AllurePublishMode.ARCHIVE);
     }
 
     /**
@@ -132,24 +137,29 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @Override
     public void afterProcessSuccessfullyFinished() throws RunBuildException {
         try {
-            publishAllureReportArchive();
-            publishAllureHistoryArchive();
+            publishAllureReport();
+            publishAllureHistory();
             publishAllureSummary();
         } catch (IOException e) {
             throw new RunBuildException(e);
         }
     }
 
-    private void publishAllureReportArchive() throws IOException {
-        Path reportArchive = getAgentTempDirectoryPath().resolve("allure-report.zip");
-        List<Path> reportFiles = Files.walk(reportDirectory)
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
-        ZipUtils.zip(reportArchive, reportDirectory.getParent(), reportFiles);
-        artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
+    private void publishAllureReport() throws IOException {
+        if (publishMode.equals(AllurePublishMode.ARCHIVE)) {
+            Path reportArchive = getAgentTempDirectoryPath().resolve("allure-report.zip");
+            List<Path> reportFiles = Files.walk(reportDirectory)
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+            ZipUtils.zip(reportArchive, reportDirectory.getParent(), reportFiles);
+            artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
+        }
+        if (publishMode.equals(AllurePublishMode.PLAIN)) {
+            artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+        }
     }
 
-    private void publishAllureHistoryArchive() throws IOException {
+    private void publishAllureHistory() throws IOException {
         Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
 
         Path historyDirectory = reportDirectory.resolve("history");

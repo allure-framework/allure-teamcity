@@ -93,6 +93,7 @@ public class AllureRunType extends RunType {
         Map<String, String> defaults = new HashMap<>();
         defaults.put(AllureConstants.RESULTS_DIRECTORY, RESULTS_DIRECTORY_DEFAULT);
         defaults.put(AllureConstants.REPORT_PATH_PREFIX, REPORT_PATH_PREFIX_DEFAULT);
+        defaults.put(AllureConstants.PUBLISH_MODE, AllurePublishMode.ARCHIVE.toString());
         return defaults;
     }
 }
