@@ -36,8 +36,8 @@
         <br>
         <props:radioButtonProperty name="<%=AllureConstants.PUBLISH_MODE%>" value="<%=AllurePublishMode.PLAIN.toString()%>"/> Publish plain report
         <span class="smallNote">
-            Archived report published faster and takes less space
-            but may be slower when you are using external storage (S3, for example)
+            Archived report published faster and takes less space but may be slower (to view)
+            when you are using external storage (S3, for example)
         </span>
     </td>
 </tr>
