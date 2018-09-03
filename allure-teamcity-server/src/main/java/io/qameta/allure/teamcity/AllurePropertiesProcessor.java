@@ -27,7 +27,6 @@ class AllurePropertiesProcessor implements PropertiesProcessor {
 
         validateNotEmpty(properties, RESULTS_DIRECTORY, problems);
         validateNotEmpty(properties, REPORT_PATH_PREFIX, problems);
-        validateNotEmpty(properties, PUBLISH_MODE, problems);
 
         validateRelative(properties, RESULTS_DIRECTORY, problems);
         validateRelative(properties, REPORT_PATH_PREFIX, problems);
