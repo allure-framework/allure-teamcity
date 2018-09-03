@@ -318,10 +318,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getAllureReportUrl() {
-        return getArtifactUrl(
-                format("%s:id", getBuild().getBuildId()),
-                "allure-report.zip!/allure-report/index.html"
-        );
+        String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
+                ? "allure-report.zip!/allure-report/index.html"
+                : "allure-report/index.html";
+        return getArtifactUrl(format("%s:id", getBuild().getBuildId()), artifactPath);
     }
 
     private String getBuildNumber() {
