@@ -157,7 +157,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
             artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
         }
         if (publishMode.equals(AllurePublishMode.PLAIN)) {
-            artifactsWatcher.addNewArtifactsPath(reportDirectory.toString());
+            String reportDirectoryName = reportDirectory.toFile().getName();
+            artifactsWatcher.addNewArtifactsPath(String.format("%s => %s",
+                    reportDirectory.toString(),
+                    reportDirectoryName));
         }
     }
 
@@ -323,7 +326,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String reportDirectoryName = reportDirectory.toFile().getName();
         String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
                 ? String.format("%s!/%s/index.html", ARCHIVE_NAME, reportDirectoryName)
-                : String.format("index.html");
+                : String.format("%s/index.html", reportDirectoryName);
         return getArtifactUrl(format("%s:id", getBuild().getBuildId()), artifactPath);
     }
 
