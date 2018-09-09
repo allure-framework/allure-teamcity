@@ -323,7 +323,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String reportDirectoryName = reportDirectory.toFile().getName();
         String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
                 ? String.format("%s!/%s/index.html", ARCHIVE_NAME, reportDirectoryName)
-                : String.format("%s/index.html", reportDirectoryName);
+                : String.format("index.html");
         return getArtifactUrl(format("%s:id", getBuild().getBuildId()), artifactPath);
     }
 
