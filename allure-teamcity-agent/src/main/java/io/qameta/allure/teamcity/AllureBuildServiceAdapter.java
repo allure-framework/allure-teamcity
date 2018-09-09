@@ -43,6 +43,8 @@ import static io.qameta.allure.teamcity.AllureConstants.*;
  */
 class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
+    private static final String ARCHIVE_NAME = "allure-report.zip";
+
     private static final String ALLURE_EXEC_NAME = "allure";
 
     /**
@@ -147,7 +149,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private void publishAllureReport() throws IOException {
         if (publishMode.equals(AllurePublishMode.ARCHIVE)) {
-            Path reportArchive = getAgentTempDirectoryPath().resolve("allure-report.zip");
+            Path reportArchive = getAgentTempDirectoryPath().resolve(ARCHIVE_NAME);
             List<Path> reportFiles = Files.walk(reportDirectory)
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
@@ -318,10 +320,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getAllureReportUrl() {
-        return getArtifactUrl(
-                format("%s:id", getBuild().getBuildId()),
-                "allure-report.zip!/allure-report/index.html"
-        );
+        String reportDirectoryName = reportDirectory.toFile().getName();
+        String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
+                ? String.format("%s!/%s/index.html", ARCHIVE_NAME, reportDirectoryName)
+                : String.format("index.html");
+        return getArtifactUrl(format("%s:id", getBuild().getBuildId()), artifactPath);
     }
 
     private String getBuildNumber() {
