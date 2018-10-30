@@ -22,12 +22,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
@@ -36,6 +41,11 @@ import java.util.zip.ZipEntry;
 import static io.qameta.allure.teamcity.utils.ZipUtils.listEntries;
 import static java.lang.String.format;
 import static io.qameta.allure.teamcity.AllureConstants.*;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_WRITE;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_READ;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_WRITE;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
@@ -212,10 +222,14 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private void copyHistoryFormLastFinishedBuild(URL url) throws IOException {
         getLogger().message(format("Search allure history information in [%s] ...", url.toString()));
-        Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
+        Path lastFinishedArtifactZip = Files.createTempFile(
+                "artifact",
+                String.valueOf(getBuild().getBuildId()),
+                defaultPermissions()
+        );
 
         Path historyDirectory = resultsDirectory.resolve("history");
-        Files.createDirectories(historyDirectory);
+        Files.createDirectories(historyDirectory, defaultPermissions());
 
         if (Files.list(historyDirectory).count() != 0) {
             getLogger().message("Allure history information already exists ...");
@@ -249,7 +263,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
             final String historyFile = historyEntry.getName();
 
             if (historyEntry.isDirectory()) {
-                Files.createDirectories(resultsDirectory.resolve(historyFile));
+                Files.createDirectories(resultsDirectory.resolve(historyFile), defaultPermissions());
             } else {
                 try (InputStream entryStream = archive.getInputStream(historyEntry)) {
                     Files.copy(entryStream, resultsDirectory.resolve(historyFile));
@@ -401,6 +415,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return client;
     }
 
+    private FileAttribute<Set<PosixFilePermission>> defaultPermissions() {
+        final Set<PosixFilePermission> permissions =
+                EnumSet.of(OTHERS_READ, OTHERS_WRITE, GROUP_READ, GROUP_WRITE);
+        return PosixFilePermissions.asFileAttribute(permissions);
+    }
 
     @NotNull
     private static String getExecutableName() {
