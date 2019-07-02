@@ -13,7 +13,7 @@ buildscript {
 
 ext {
     gradleScriptDir = "${rootProject.projectDir}/gradle"
-    teamcityVersion = '9.1'
+    teamcityVersion = '2019.1'
     teamcityDir = "${rootProject.projectDir}/.teamcity"
     serverOpts = "-DTC.res.disableAll=true " +
             "-Dteamcity.development.mode=true " +
