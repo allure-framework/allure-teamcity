@@ -54,12 +54,7 @@ public class AllureBuildServiceFactory implements CommandLineBuildServiceFactory
             /** {@inheritDoc} */
             @Override
             public boolean canRun(@NotNull BuildAgentConfiguration agentConfiguration) {
-                boolean canRun = new File(agentConfiguration.getAgentToolsDirectory(), ALLURE_TOOL_NAME).exists();
-                if (!canRun) {
-                    Loggers.AGENT.warn("Could not run Allure report generation " +
-                            "because the Allure tool is not installed.");
-                }
-                return canRun;
+                return true;
             }
         };
     }

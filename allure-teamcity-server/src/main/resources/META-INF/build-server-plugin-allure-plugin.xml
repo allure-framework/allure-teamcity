@@ -3,4 +3,6 @@
 <beans default-autowire="constructor">
     <bean id="allureRunType" class="io.qameta.allure.teamcity.AllureRunType"/>
     <bean class="io.qameta.allure.teamcity.AllureReportBuildSummaryExtension"/>
+    <bean class="io.qameta.allure.teamcity.AllureToolUsageProvider"/>
+    <bean class="io.qameta.allure.teamcity.AllureTool"/>
 </beans>
