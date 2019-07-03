@@ -181,7 +181,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve("summary.json");
         ObjectMapper mapper = new ObjectMapper();
 
-        Summary summary = mapper.readValue(summaryWidgetPath.toFile(), Summary.class);
+        AllureReportSummary summary = mapper.readValue(summaryWidgetPath.toFile(), AllureReportSummary.class);
         summary.setUrl(getAllureReportUrl());
 
         String json = mapper.writeValueAsString(summary);
