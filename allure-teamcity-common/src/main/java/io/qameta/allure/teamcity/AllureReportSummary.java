@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Summary {
+public class AllureReportSummary {
 
     private String url;
 
