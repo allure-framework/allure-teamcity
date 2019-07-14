@@ -3,6 +3,7 @@ package io.qameta.allure.teamcity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,11 +31,15 @@ public class AllureReportSummary {
 
     public String printStatistic() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Tests passed: %s", count("passed").orElse(0)));
-        count("broken").ifPresent(broken -> builder.append(String.format(", broken: %s", broken)));
-        count("failed").ifPresent(broken -> builder.append(String.format(", failed: %s", broken)));
-        count("skipped").ifPresent(broken -> builder.append(String.format(", skipped: %s", broken)));
-        return builder.toString();
+        if (Objects.nonNull(statistic)) {
+            builder.append(String.format("Tests passed: %s", count("passed").orElse(0)));
+            count("broken").ifPresent(broken -> builder.append(String.format(", broken: %s", broken)));
+            count("failed").ifPresent(broken -> builder.append(String.format(", failed: %s", broken)));
+            count("skipped").ifPresent(broken -> builder.append(String.format(", skipped: %s", broken)));
+            return builder.toString();
+        } else {
+            return "open report";
+        }
     }
 
     private Optional<Integer> count(String name) {
