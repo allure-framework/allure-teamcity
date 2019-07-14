@@ -31,6 +31,16 @@ public class AllureReportBuildSummaryExtension extends SimplePageExtension {
         register();
     }
 
+    public boolean isAvailable(@NotNull final HttpServletRequest request) {
+        final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, server);
+        if (Objects.isNull(build)) {
+            return false;
+        }
+        final BuildArtifact artifact = build.getArtifacts(BuildArtifactsViewMode.VIEW_HIDDEN_ONLY)
+                .getArtifact(AllureConstants.ALLURE_ARTIFACT_SUMMARY_LOCATION);
+        return Objects.nonNull(artifact);
+    }
+
     @Override
     public void fillModel(@NotNull final Map<String, Object> model, @NotNull final HttpServletRequest request) {
         final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, server);
