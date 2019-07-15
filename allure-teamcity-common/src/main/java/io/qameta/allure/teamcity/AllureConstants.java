@@ -1,5 +1,7 @@
 package io.qameta.allure.teamcity;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The internal class with some constants needed to Allure plugin.
  *
@@ -16,10 +18,14 @@ public final class AllureConstants {
 
     static final String RUN_TYPE = "allureReportGeneratorRunner";
 
-    /** The default directory with allure results. */
+    /**
+     * The default directory with allure results.
+     */
     static final String RESULTS_DIRECTORY_DEFAULT = "allure-results";
 
-    /** The default subdirectory (or subdirectories) to put generated report into. */
+    /**
+     * The default subdirectory (or subdirectories) to put generated report into.
+     */
     static final String REPORT_PATH_PREFIX_DEFAULT = "allure-report";
 
     /**
@@ -27,6 +33,12 @@ public final class AllureConstants {
      */
     static final String ALLURE_TOOL_NAME = "allure-commandline";
 
+    /**
+     * The name of parameter version of Allure commandline tool.
+     */
+    static final String ALLURE_TOOL_VERSION = "allure-commandline-version";
+
+    static final String ALLURE_DEFAULT_TOOL_VERSION_ID = ALLURE_TOOL_NAME + '.' + "2.12.1";
     /**
      * The default directory with allure meta files.
      */
@@ -42,6 +54,25 @@ public final class AllureConstants {
      */
     static final String ALLURE_ARTIFACT_SUMMARY_LOCATION = ALLURE_ARTIFACT_META_LOCATION + "summary.json";
 
-    AllureConstants() {
+    private static final String ALLURE_COMMANDLINE_MAVEN_URL = "http://central.maven.org/" +
+            "maven2/io/qameta/allure/allure-commandline/";
+
+    static final String ALLURE_COMMANDLINE_MAVEN_METADATA_URL = ALLURE_COMMANDLINE_MAVEN_URL + "maven-metadata.xml";
+    static final String ALLURE_COMMANDLINE_MAVEN_FILENAME = "allure-commandline-%1$s.zip";
+    static final String ALLURE_COMMANDLINE_MAVEN_ZIP_URL = ALLURE_COMMANDLINE_MAVEN_URL + "%1$s/"
+            + ALLURE_COMMANDLINE_MAVEN_FILENAME;
+
+
+    public AllureConstants() {
+    }
+
+    @NotNull
+    public String getAllureToolName() {
+        return ALLURE_TOOL_NAME;
+    }
+
+    @NotNull
+    public String getAllureToolVersion() {
+        return ALLURE_TOOL_VERSION;
     }
 }
