@@ -21,7 +21,7 @@ public class AllureToolType extends ToolTypeAdapter {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Allure Plugin";
+        return "Allure";
     }
 
     @NotNull
@@ -33,7 +33,7 @@ public class AllureToolType extends ToolTypeAdapter {
     @Nullable
     @Override
     public String getDescription() {
-        return "Allure commandline";
+        return "Allure";
     }
 
     @Override

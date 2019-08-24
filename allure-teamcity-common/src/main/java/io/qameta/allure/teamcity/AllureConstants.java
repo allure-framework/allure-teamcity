@@ -16,6 +16,8 @@ public final class AllureConstants {
 
     public static final String PUBLISH_MODE = "allure.publish.mode";
 
+    static final String ALLURE_TOOL_VERSION = "allure.version";
+
     static final String RUN_TYPE = "allureReportGeneratorRunner";
 
     /**
@@ -31,14 +33,11 @@ public final class AllureConstants {
     /**
      * The name of Allure commandline tool.
      */
-    static final String ALLURE_TOOL_NAME = "allure-commandline";
+    static final String ALLURE_TOOL_NAME = "allure";
 
-    /**
-     * The name of parameter version of Allure commandline tool.
-     */
-    static final String ALLURE_TOOL_VERSION = "allure-commandline-version";
 
-    static final String ALLURE_DEFAULT_TOOL_VERSION_ID = ALLURE_TOOL_NAME + '.' + "2.12.1";
+    static final String ALLURE_DEFAULT_TOOL_VERSION = "%teamcity.tool." + ALLURE_TOOL_NAME + ".DEFAULT%";
+
     /**
      * The default directory with allure meta files.
      */

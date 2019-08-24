@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
  * @author Sergey Khomutinin skhomuti@gmail.com
  * Date: 14.07.2019
  */
-public class AllureServerToolProvider extends ServerToolProviderAdapter {
+public class AllureToolProvider extends ServerToolProviderAdapter {
     private AvailableToolsFetcher fetcher;
 
-    public AllureServerToolProvider(AvailableToolsFetcher fetcher) {
+    public AllureToolProvider(AvailableToolsFetcher fetcher) {
         this.fetcher = fetcher;
     }
 
@@ -83,6 +83,6 @@ public class AllureServerToolProvider extends ServerToolProviderAdapter {
     @Nullable
     @Override
     public String getDefaultBundledVersionId() {
-        return AllureConstants.ALLURE_DEFAULT_TOOL_VERSION_ID;
+        return AllureConstants.ALLURE_DEFAULT_TOOL_VERSION;
     }
 }
