@@ -94,7 +94,7 @@ public class AllureRunType extends RunType {
         defaults.put(AllureConstants.RESULTS_DIRECTORY, RESULTS_DIRECTORY_DEFAULT);
         defaults.put(AllureConstants.REPORT_PATH_PREFIX, REPORT_PATH_PREFIX_DEFAULT);
         defaults.put(AllureConstants.PUBLISH_MODE, AllurePublishMode.ARCHIVE.toString());
-        defaults.put(AllureConstants.ALLURE_TOOL_VERSION, ALLURE_DEFAULT_TOOL_VERSION_ID);
+        defaults.put(AllureConstants.ALLURE_TOOL_VERSION, ALLURE_DEFAULT_TOOL_VERSION);
         return defaults;
     }
 }

@@ -33,7 +33,7 @@ public class AllureDownloadableToolVersion implements DownloadableToolVersion {
     @NotNull
     @Override
     public ToolType getType() {
-        return AllureServerToolProvider.ALLURE_TOOL_TYPE;
+        return AllureToolProvider.ALLURE_TOOL_TYPE;
     }
 
     @NotNull

@@ -2,9 +2,13 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans default-autowire="constructor">
     <bean id="allureRunType" class="io.qameta.allure.teamcity.AllureRunType"/>
+
     <bean class="io.qameta.allure.teamcity.AllureReportBuildSummaryExtension"/>
-    <bean class="io.qameta.allure.teamcity.AllureServerToolProvider"/>
-    <bean class="io.qameta.allure.teamcity.AllureToolType"/>
+
     <bean class="io.qameta.allure.teamcity.AllureAvailableToolsFetcher"/>
+    <bean class="io.qameta.allure.teamcity.AllureToolProvider"/>
+    <bean class="io.qameta.allure.teamcity.AllureToolType"/>
+
+    <bean class="io.qameta.allure.teamcity.AllurePropertiesProvider"/>
     <bean class="io.qameta.allure.teamcity.AllureConstants"/>
 </beans>
