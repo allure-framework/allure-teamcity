@@ -6,6 +6,7 @@
     <bean class="io.qameta.allure.teamcity.AllureReportBuildSummaryExtension"/>
 
     <bean class="io.qameta.allure.teamcity.AllureAvailableToolsFetcher"/>
+    <bean class="io.qameta.allure.teamcity.AllureToolUsageProvider"/>
     <bean class="io.qameta.allure.teamcity.AllureToolProvider"/>
     <bean class="io.qameta.allure.teamcity.AllureToolType"/>
 
