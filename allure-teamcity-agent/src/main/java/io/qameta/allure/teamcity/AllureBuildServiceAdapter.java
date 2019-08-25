@@ -1,16 +1,18 @@
 package io.qameta.allure.teamcity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 import io.qameta.allure.teamcity.utils.ZipUtils;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProgressLogger;
-import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
-import jetbrains.buildServer.agent.runner.*;
+import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
+import jetbrains.buildServer.agent.runner.ProgramCommandLine;
+import jetbrains.buildServer.agent.runner.SimpleProgramCommandLine;
+import jetbrains.buildServer.runner.JavaRunnerConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import io.qameta.allure.teamcity.callables.AddExecutorInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,18 +26,23 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-
+import static io.qameta.allure.teamcity.AllureConstants.ALLURE_ARTIFACT_HISTORY_LOCATION;
+import static io.qameta.allure.teamcity.AllureConstants.ALLURE_ARTIFACT_META_LOCATION;
+import static io.qameta.allure.teamcity.AllureConstants.ALLURE_TOOL_NAME;
+import static io.qameta.allure.teamcity.AllureConstants.PUBLISH_MODE;
+import static io.qameta.allure.teamcity.AllureConstants.REPORT_PATH_PREFIX;
+import static io.qameta.allure.teamcity.AllureConstants.RESULTS_DIRECTORY;
 import static io.qameta.allure.teamcity.utils.ZipUtils.listEntries;
 import static java.lang.String.format;
-import static io.qameta.allure.teamcity.AllureConstants.*;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
@@ -120,17 +127,22 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
 
         BuildProgressLogger buildLogger = getLogger();
-        BuildRunnerContext buildRunnerContext = getRunnerContext();
-        Map<String, String> programEnvironmentVariables = buildRunnerContext.getBuildParameters().getEnvironmentVariables();
+
+        Map<String, String> envVariables = new HashMap<>(getRunnerContext()
+                .getBuildParameters()
+                .getEnvironmentVariables());
+        Optional.ofNullable(getRunnerContext().getRunnerParameters().get(JavaRunnerConstants.TARGET_JDK_HOME))
+                .ifPresent(javaHome -> envVariables.put("JAVA_HOME", javaHome));
+
         String programPath = getProgramPath();
         List<String> programArgs = getProgramArgs();
 
-        buildLogger.message("Program environment variables: " + programEnvironmentVariables.toString());
+        buildLogger.message("Program environment variables: " + envVariables.toString());
         buildLogger.message("Program working directory: " + workingDirectory);
         buildLogger.message("Program path: " + programPath);
         buildLogger.message("Program args: " + programArgs.toString());
 
-        return new SimpleProgramCommandLine(programEnvironmentVariables, workingDirectory, programPath, programArgs);
+        return new SimpleProgramCommandLine(envVariables, workingDirectory, programPath, programArgs);
     }
 
     /**
