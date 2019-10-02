@@ -5,12 +5,9 @@ import jetbrains.buildServer.agent.BuildAgentConfiguration;
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher;
 import jetbrains.buildServer.agent.runner.CommandLineBuildService;
 import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
-import jetbrains.buildServer.log.Loggers;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
-import static io.qameta.allure.teamcity.AllureConstants.*;
+import static io.qameta.allure.teamcity.AllureConstants.RUN_TYPE;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
@@ -54,12 +51,7 @@ public class AllureBuildServiceFactory implements CommandLineBuildServiceFactory
             /** {@inheritDoc} */
             @Override
             public boolean canRun(@NotNull BuildAgentConfiguration agentConfiguration) {
-                boolean canRun = new File(agentConfiguration.getAgentToolsDirectory(), ALLURE_TOOL_NAME).exists();
-                if (!canRun) {
-                    Loggers.AGENT.warn("Could not run Allure report generation " +
-                            "because the Allure tool is not installed.");
-                }
-                return canRun;
+                return true;
             }
         };
     }
