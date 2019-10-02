@@ -67,7 +67,7 @@ public class AllureToolProvider extends ServerToolProviderAdapter {
     @Override
     public GetPackageVersionResult tryGetPackageVersion(@NotNull File toolPackage) {
         final String packageName = FilenameUtils.removeExtension(toolPackage.getName());
-        Pattern pattern = Pattern.compile("allure-commandline-([\\d\\.]+)");
+        Pattern pattern = Pattern.compile("allure-commandline-(.+)");
 
         Matcher matcher = pattern.matcher(packageName);
         if (!matcher.matches()) {
