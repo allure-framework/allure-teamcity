@@ -1,8 +1,6 @@
 package io.qameta.allure.teamcity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jetbrains.buildServer.BuildProblemData;
-import jetbrains.buildServer.BuildProblemTypes;
 import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
@@ -21,16 +19,26 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 
-public class AllureBuildSummaryExtension extends SimplePageExtension {
+public class AllureReportBuildSummaryExtension extends SimplePageExtension {
 
     private final SBuildServer server;
 
-    public AllureBuildSummaryExtension(@NotNull final SBuildServer server,
-                                       @NotNull final WebControllerManager manager,
-                                       @NotNull final PluginDescriptor pluginDescriptor) {
+    public AllureReportBuildSummaryExtension(@NotNull final SBuildServer server,
+                                             @NotNull final WebControllerManager manager,
+                                             @NotNull final PluginDescriptor pluginDescriptor) {
         super(manager, PlaceId.BUILD_SUMMARY, pluginDescriptor.getPluginName(), "buildSummary.jsp");
         this.server = server;
         register();
+    }
+
+    public boolean isAvailable(@NotNull final HttpServletRequest request) {
+        final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, server);
+        if (Objects.isNull(build)) {
+            return false;
+        }
+        final BuildArtifact artifact = build.getArtifacts(BuildArtifactsViewMode.VIEW_HIDDEN_ONLY)
+                .getArtifact(AllureConstants.ALLURE_ARTIFACT_SUMMARY_LOCATION);
+        return Objects.nonNull(artifact);
     }
 
     @Override
@@ -46,18 +54,18 @@ public class AllureBuildSummaryExtension extends SimplePageExtension {
         }
 
         try {
-            final Summary summary = readSummary(artifact);
-            model.put("summary", summary);
+            final AllureReportSummary summary = readSummary(artifact);
+            model.put("allure_summary", summary);
         } catch (IOException e) {
-            model.put("error", e.getMessage());
+            model.put("allure_error", e.getMessage());
         }
     }
 
-    private static Summary readSummary(BuildArtifact artifact) throws IOException {
+    private static AllureReportSummary readSummary(BuildArtifact artifact) throws IOException {
         try (InputStream inputStream = artifact.getInputStream()) {
             String summaryJson = IOUtils.toString(inputStream);
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(summaryJson, Summary.class);
+            return mapper.readValue(summaryJson, AllureReportSummary.class);
         }
     }
 

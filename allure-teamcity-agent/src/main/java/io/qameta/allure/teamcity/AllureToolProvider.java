@@ -55,6 +55,6 @@ public class AllureToolProvider implements ToolProvider {
     public String getPath(@NotNull final String toolName,
                           @NotNull final AgentRunningBuild build,
                           @NotNull final BuildRunnerContext runner) {
-        return getPath(toolName);
+        return runner.getRunnerParameters().get(AllureConstants.ALLURE_TOOL_VERSION);
     }
 }

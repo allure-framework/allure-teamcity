@@ -23,7 +23,7 @@ dependencies {
     compile 'org.apache.commons:commons-compress:1.16.1'
 
     provided 'com.intellij:openapi:7.0.3'
-    provided 'org.jetbrains.teamcity:agent-api:9.1'
-    provided 'org.jetbrains.teamcity.internal:agent:9.1'
+    provided "org.jetbrains.teamcity:agent-api:${teamcityVersion}"
+    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
 
 }

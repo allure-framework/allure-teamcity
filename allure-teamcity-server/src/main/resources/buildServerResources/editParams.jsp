@@ -7,6 +7,9 @@
 <%@ page import="io.qameta.allure.teamcity.AllureConstants" %>
 <%@ page import="io.qameta.allure.teamcity.AllurePublishMode" %>
 
+<jsp:useBean id="constants" type="io.qameta.allure.teamcity.AllureConstants"
+             beanName="io.qameta.allure.teamcity.AllureConstants"/>
+
 <tr id="allure.result.directory.container">
     <th><label for="allure.result.directory">Result directory:</label></th>
     <td>
@@ -28,6 +31,8 @@
         </span>
     </td>
 </tr>
+
+<jsp:include page="/tools/editToolUsage.html?toolType=${constants.allureToolName}&versionParameterName=${constants.allureToolVersion}&class=longField"/>
 
 <tr id="allure.report.mode">
     <th><label for="allure.report.path.prefix">Publish mode:</label></th>

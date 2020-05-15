@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh './gradlew installTeamcity2017'
                 sh './gradlew build'
             }
         }

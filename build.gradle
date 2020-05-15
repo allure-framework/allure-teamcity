@@ -12,8 +12,8 @@ buildscript {
 }
 
 ext {
+    teamcityVersion = '2017.1'
     gradleScriptDir = "${rootProject.projectDir}/gradle"
-    teamcityVersion = '9.1'
     teamcityDir = "${rootProject.projectDir}/.teamcity"
     serverOpts = "-DTC.res.disableAll=true " +
             "-Dteamcity.development.mode=true " +
@@ -47,6 +47,7 @@ subprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url = "https://download.jetbrains.com/teamcity-repository" }
     }
 
     compileJava {
