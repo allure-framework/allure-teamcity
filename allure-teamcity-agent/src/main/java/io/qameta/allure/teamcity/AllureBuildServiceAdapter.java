@@ -17,8 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,6 +45,7 @@ import static io.qameta.allure.teamcity.AllureConstants.REPORT_PATH_PREFIX;
 import static io.qameta.allure.teamcity.AllureConstants.RESULTS_DIRECTORY;
 import static io.qameta.allure.teamcity.utils.ZipUtils.listEntries;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
@@ -299,7 +302,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
                 getBuild().getBuildTypeExternalId()));
         String branch = getConfigParameters().get("teamcity.build.branch");
         if (Objects.nonNull(branch)) {
-            artifactUrl.append(format("?branch=%s", branch));
+            String encodedBranch = encodeValue(branch);
+            artifactUrl.append(format("?branch=%s", encodedBranch));
         }
         return artifactUrl.toString();
     }
@@ -314,7 +318,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
                 getTeamcityBaseUrl(), getBuild().getBuildTypeExternalId(), build, name));
         String branch = getConfigParameters().get("teamcity.build.branch");
         if (Objects.nonNull(branch)) {
-            artifactUrl.append(format("?branch=%s", branch));
+            String encodedBranch = encodeValue(branch);
+            artifactUrl.append(format("?branch=%s", encodedBranch));
         }
         return artifactUrl.toString();
     }
@@ -428,4 +433,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return getAgentTempDirectory().toPath();
     }
 
+    private String encodeValue(String value) {
+        try {
+            return URLEncoder.encode(value, UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            return value;
+        }
+    }
 }
