@@ -31,10 +31,10 @@ dependencies {
     def teamcityFullDir = "$teamcityDir/TeamCity-2017.1.5"
     agent project(path: ':allure-teamcity-agent', configuration: 'plugin')
 
-    implementation project(':allure-teamcity-common')
+    compile project(':allure-teamcity-common')
 
-    implementation 'commons-io:commons-io:2.7'
-    implementation 'org.apache.commons:commons-lang3:3.4'
+    compile 'commons-io:commons-io:2.7'
+    compile 'org.apache.commons:commons-lang3:3.4'
 
     provided 'javax.servlet:jstl:1.1.2'
     provided "org.jetbrains.teamcity.internal:server:$teamcityVersion"
