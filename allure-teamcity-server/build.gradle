@@ -25,7 +25,7 @@ serverPlugin {
     version = null //teamcity plugin file name should be without version suffix
 }
 
-configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+//configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
 
 dependencies {
     def teamcityFullDir = "$teamcityDir/TeamCity-2017.1.5"
@@ -33,8 +33,10 @@ dependencies {
 
     compile project(':allure-teamcity-common')
 
-    provided 'javax.servlet:jstl:1.1.2'
+    compile 'commons-io:commons-io:2.7'
     compile 'org.apache.commons:commons-lang3:3.4'
+
+    provided 'javax.servlet:jstl:1.1.2'
     provided "org.jetbrains.teamcity.internal:server:$teamcityVersion"
     provided files("${teamcityFullDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
     provided files("${teamcityFullDir}/webapps/ROOT/WEB-INF/lib/common-tools.jar")

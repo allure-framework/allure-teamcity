@@ -1,6 +1,6 @@
 package io.qameta.allure.teamcity.callables;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -17,9 +17,8 @@ public abstract class AbstractAddInfo {
         Files.createDirectories(outputDirectory);
         Path testRun = outputDirectory.resolve(getFileName());
         try (Writer writer = Files.newBufferedWriter(testRun, StandardCharsets.UTF_8)) {
-            JSONObject.fromObject(getData())
-                    .write(writer)
-                    .flush();
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(writer, getData());
         }
         return testRun;
     }
