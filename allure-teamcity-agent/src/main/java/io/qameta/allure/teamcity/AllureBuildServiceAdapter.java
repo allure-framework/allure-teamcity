@@ -297,7 +297,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     private String getLastFinishedArtifactUrl() {
         StringBuilder artifactUrl = new StringBuilder();
         artifactUrl.append(format(
-                "%s/repository/downloadAll/%s/.lastFinished/artifacts.zip",
+                "%srepository/downloadAll/%s/.lastFinished/artifacts.zip",
                 getTeamcityBaseUrl(),
                 getBuild().getBuildTypeExternalId()));
         String branch = getConfigParameters().get("teamcity.build.branch");
@@ -314,7 +314,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private String getArtifactUrl(String build, String name) {
         StringBuilder artifactUrl = new StringBuilder();
-        artifactUrl.append(format("%s/repository/download/%s/%s/%s",
+        artifactUrl.append(format("%srepository/download/%s/%s/%s",
                 getTeamcityBaseUrl(), getBuild().getBuildTypeExternalId(), build, name));
         String branch = getConfigParameters().get("teamcity.build.branch");
         if (Objects.nonNull(branch)) {
