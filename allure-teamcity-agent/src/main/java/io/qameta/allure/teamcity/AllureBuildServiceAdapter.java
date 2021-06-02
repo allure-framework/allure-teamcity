@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -232,9 +233,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         Path historyDirectory = resultsDirectory.resolve("history");
         Files.createDirectories(historyDirectory);
 
-        if (Files.list(historyDirectory).count() != 0) {
-            getLogger().message("Allure history information already exists ...");
-            return;
+        try (Stream<Path> dirList = Files.list(historyDirectory)) {
+            if (dirList.count() != 0) {
+                getLogger().message("Allure history information already exists ...");
+                return;
+            }
         }
 
         String password = getServerAuthentication();
