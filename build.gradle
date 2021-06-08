@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.rodm:gradle-teamcity-plugin:1.2.2'
+        classpath 'com.github.rodm:gradle-teamcity-plugin:1.0'
         classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
