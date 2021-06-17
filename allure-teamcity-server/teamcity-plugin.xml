@@ -13,5 +13,5 @@
             <url>https://github.com/allure-framework</url>
         </vendor>
     </info>
-    <deployment use-separate-classloader="true"/>
+    <deployment use-separate-classloader="true" node-responsibilities-aware="true"/>
 </teamcity-plugin>
