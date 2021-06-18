@@ -165,7 +165,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private void publishAllureReport() throws IOException {
         if (publishMode.equals(AllurePublishMode.ARCHIVE)) {
-            Path reportArchive = getAgentTempDirectoryPath().resolve(ARCHIVE_NAME);
+            Path reportArchive = getReportArtifactsDirectoryPath().resolve(ARCHIVE_NAME);
             List<Path> reportFiles = Files.walk(reportDirectory)
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
@@ -173,15 +173,14 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
             artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
         }
         if (publishMode.equals(AllurePublishMode.PLAIN)) {
-            String reportDirectoryName = reportDirectory.toFile().getName();
             artifactsWatcher.addNewArtifactsPath(String.format("%s => %s",
                     reportDirectory.toString(),
-                    reportDirectoryName));
+                    reportDirectory.toString()));
         }
     }
 
     private void publishAllureHistory() throws IOException {
-        Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
+        Path historyArchive = getReportArtifactsDirectoryPath().resolve("history.zip");
 
         Path historyDirectory = reportDirectory.resolve("history");
         List<Path> historyFiles = Files.walk(historyDirectory)
@@ -192,7 +191,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     }
 
     private void publishAllureSummary() throws IOException {
-        Path summaryOutputPath = getAgentTempDirectoryPath().resolve("summary.json");
+        Path summaryOutputPath = getReportArtifactsDirectoryPath().resolve("summary.json");
 
         Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve("summary.json");
         ObjectMapper mapper = new ObjectMapper();
@@ -432,8 +431,11 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return Paths.get(workingDirectory);
     }
 
-    private Path getAgentTempDirectoryPath() {
-        return getAgentTempDirectory().toPath();
+    private Path getReportArtifactsDirectoryPath() {
+        Path artifactsPath = reportDirectory.resolve("Artifacts");
+        File artifactsDir = artifactsPath.toFile();
+        if (!artifactsDir.exists()) artifactsDir.mkdirs();
+        return artifactsPath;
     }
 
     private String encodeValue(String value) {
