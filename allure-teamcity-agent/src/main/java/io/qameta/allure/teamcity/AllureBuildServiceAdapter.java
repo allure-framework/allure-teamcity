@@ -244,6 +244,8 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         String encoding = Base64.getUrlEncoder().encodeToString(password.getBytes("utf-8"));
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(180 * 1000);
+        connection.setReadTimeout(180 * 1000);
         connection.setRequestProperty("Authorization", "Basic " + encoding);
         connection.connect();
 
