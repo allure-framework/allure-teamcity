@@ -21,9 +21,6 @@ ext {
             "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50055"
 }
 
-apply from: "${gradleScriptDir}/bintray.gradle"
-apply from: "${gradleScriptDir}/release.gradle"
-
 configure(rootProject) {
 
     description = "Allure for TeamCity"
