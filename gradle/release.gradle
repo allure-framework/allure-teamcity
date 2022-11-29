@@ -1,0 +1,5 @@
+apply plugin: 'net.researchgate.release'
+
+release {
+    tagTemplate = '${version}'
+}
