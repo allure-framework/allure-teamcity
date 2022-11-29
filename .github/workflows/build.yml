@@ -19,4 +19,4 @@ jobs:
           java-version: '8'
           cache: 'gradle'
       - name: Build
-        run: ./gradlew installTeamcity2017 build
+        run: ./gradlew installTeamcity20202 build
