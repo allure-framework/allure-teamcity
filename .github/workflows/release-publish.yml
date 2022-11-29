@@ -15,12 +15,7 @@ jobs:
           java-version: 1.8
       - name: "Gradle Build"
         run: ./gradlew installTeamcity2017 build -Pversion=${GITHUB_REF:10}
-      - name: "Upload binaries"
-        uses: actions/upload-release-asset@v1.0.1
+      - name: "Gradle Publish to Jetbrains"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: allure-teamcity-server/build/distributions/allure-teamcity.zip
-          asset_name: allure-teamcity.zip
-          asset_content_type: application/octet-stream
+          JETBRAINS_TOKEN: ${{ secrets.JETBRAINS_TOKEN }}
+        run: ./gradlew :allure-ee-teamcity-server:publishPlugin -Pversion=${GITHUB_REF:10}

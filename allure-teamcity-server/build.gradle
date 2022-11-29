@@ -1,12 +1,27 @@
 apply plugin: "com.github.rodm.teamcity-server"
+apply plugin: "com.github.rodm.teamcity-environments"
 
 apply from: "${gradleScriptDir}/bintray.gradle"
 
 teamcity {
     version = teamcityVersion
     server {
-        descriptor = project.file('teamcity-plugin.xml')
-        tokens = [Version: project.version]
+        descriptor {
+            name = project.parent.name
+            displayName = 'Allure for TeamCity'
+            version = project.version
+
+            description = 'Plugin adds support for generate Allure report based on tests results'
+
+            vendorName = 'qameta'
+            vendorUrl = 'https://qameta.io'
+            email = 'team@qameta.io'
+
+            useSeparateClassloader = true
+        }
+        publish {
+            token = System.getenv("JETBRAINS_TOKEN")
+        }
     }
 
     environments {

@@ -3,5 +3,3 @@ apply plugin: 'net.researchgate.release'
 release {
     tagTemplate = '${version}'
 }
-
-afterReleaseBuild.dependsOn bintrayUpload
