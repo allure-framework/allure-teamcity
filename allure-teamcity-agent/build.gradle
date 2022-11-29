@@ -2,9 +2,11 @@ apply plugin: "com.github.rodm.teamcity-agent"
 
 teamcity {
     version = teamcityVersion
-    descriptor {
-        pluginDeployment {
-            useSeparateClassloader = true
+    agent {
+        descriptor {
+            pluginDeployment {
+                useSeparateClassloader = true
+            }
         }
     }
 }
@@ -17,14 +19,15 @@ agentPlugin {
 dependencies {
     compile project(':allure-teamcity-common')
 
-    compile 'commons-io:commons-io:2.7'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'commons-logging:commons-logging:1.1.3'
-    compile 'commons-httpclient:commons-httpclient:3.1'
-    compile 'org.apache.commons:commons-compress:1.16.1'
+    compile 'commons-httpclient:commons-httpclient'
+    compile 'commons-logging:commons-logging'
 
-    provided 'com.intellij:openapi:7.0.3'
-    provided "org.jetbrains.teamcity:agent-api:${teamcityVersion}"
-    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+    compile 'org.apache.commons:commons-compress'
+    compile 'org.apache.commons:commons-io'
+    compile 'org.apache.commons:commons-lang3'
+
+    provided 'com.intellij:openapi'
+    provided "org.jetbrains.teamcity:agent-api"
+    provided "org.jetbrains.teamcity.internal:agent"
 
 }
