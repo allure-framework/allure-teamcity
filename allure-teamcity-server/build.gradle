@@ -1,8 +1,6 @@
 apply plugin: "com.github.rodm.teamcity-server"
 apply plugin: "com.github.rodm.teamcity-environments"
 
-apply from: "${gradleScriptDir}/bintray.gradle"
-
 teamcity {
     version = teamcityVersion
     server {
