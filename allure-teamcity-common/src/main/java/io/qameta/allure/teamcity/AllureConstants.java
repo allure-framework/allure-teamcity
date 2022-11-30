@@ -53,8 +53,8 @@ public final class AllureConstants {
      */
     static final String ALLURE_ARTIFACT_SUMMARY_LOCATION = ALLURE_ARTIFACT_META_LOCATION + "summary.json";
 
-    private static final String ALLURE_COMMANDLINE_MAVEN_URL = "http://central.maven.org/" +
-            "maven2/io/qameta/allure/allure-commandline/";
+    private static final String ALLURE_COMMANDLINE_MAVEN_URL = "https://repo.maven.apache.org/maven2/"
+            + "io/qameta/allure/allure-commandline/";
 
     static final String ALLURE_COMMANDLINE_MAVEN_METADATA_URL = ALLURE_COMMANDLINE_MAVEN_URL + "maven-metadata.xml";
     static final String ALLURE_COMMANDLINE_MAVEN_FILENAME = "allure-commandline-%1$s.zip";
