@@ -18,4 +18,4 @@ jobs:
       - name: "Gradle Publish to Jetbrains"
         env:
           JETBRAINS_TOKEN: ${{ secrets.JETBRAINS_TOKEN }}
-        run: ./gradlew :allure-ee-teamcity-server:publishPlugin -Pversion=${GITHUB_REF:10}
+        run: ./gradlew :allure-teamcity-server:publishPlugin -Pversion=${GITHUB_REF:10}
