@@ -31,7 +31,7 @@ configure(rootProject) {
     task build() {
     }
 
-    afterReleaseBuild.dependsOn(":allure-ee-teamcity-server:publishPlugin")
+    afterReleaseBuild.dependsOn(":allure-teamcity-server:publishPlugin")
 }
 
 tasks.withType(Wrapper.class) {
