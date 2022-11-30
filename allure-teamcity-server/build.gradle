@@ -6,7 +6,7 @@ teamcity {
     server {
         descriptor {
             name = project.parent.name
-            displayName = 'Allure for TeamCity'
+            displayName = 'Allure Report'
             version = project.version
 
             description = 'Plugin adds support for generate Allure report based on tests results'
