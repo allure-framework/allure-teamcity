@@ -22,7 +22,7 @@ ext {
 
 group = 'io.qameta.allure'
 version = version
-description = 'Allure for TeamCity'
+description = 'Allure Report'
 
 configure(rootProject) {
 
