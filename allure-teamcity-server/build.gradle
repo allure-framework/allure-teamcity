@@ -16,6 +16,7 @@ teamcity {
             email = 'team@qameta.io'
 
             useSeparateClassloader = true
+            nodeResponsibilitiesAware = true
         }
         publish {
             token = System.getenv("JETBRAINS_TOKEN")
@@ -23,8 +24,8 @@ teamcity {
     }
 
     environments {
-        Teamcity2017 {
-            version = '2017.1.5'
+        Teamcity2020 {
+            version = '2020.1'
             homeDir = file("$teamcityDir/TeamCity-${version}")
             dataDir = file("$teamcityDir/data/${version}")
             serverOptions = serverOpts
@@ -51,7 +52,7 @@ dependencies {
     provided 'javax.servlet:jstl'
     provided 'org.jetbrains.teamcity.internal:server'
 
-    def teamcityFullDir = "$teamcityDir/TeamCity-2017.1.5"
+    def teamcityFullDir = "$teamcityDir/TeamCity-2020.1"
     provided files("${teamcityFullDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
     provided files("${teamcityFullDir}/webapps/ROOT/WEB-INF/lib/common-tools.jar")
 }

@@ -4,13 +4,13 @@ buildscript {
     }
     dependencies {
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE'
-        classpath 'com.github.rodm:gradle-teamcity-plugin:1.2.2'
+        classpath 'com.github.rodm:gradle-teamcity-plugin:1.4.1'
         classpath 'net.researchgate:gradle-release:2.7.0'
     }
 }
 
 ext {
-    teamcityVersion = '2017.1'
+    teamcityVersion = '2020.1'
     teamcityDir = "${rootProject.projectDir}/.teamcity"
     serverOpts = "-DTC.res.disableAll=true " +
             "-Dteamcity.development.mode=true " +
