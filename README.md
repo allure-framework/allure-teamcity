@@ -4,8 +4,8 @@
 [gitter-ru]: https://gitter.im/allure-framework/allure-ru
 [twitter]: https://twitter.com/QametaSoftware "Qameta Software"
 [twitter-team]: https://twitter.com/QametaSoftware/lists/team/members "Team"
-[build]: https://ci.qameta.io/job/allure-teamcity/job/master "Build"
-[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-teamcity/master
+[build]: https://ci.qameta.io/job/allure-teamcity/job/main "Build"
+[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-teamcity/main
 [bintray]: https://bintray.com/qameta/generic/allure-teamcity "Bintray"
 [bintray-badge]: https://img.shields.io/bintray/v/qameta/generic/allure-teamcity.svg?style=flat
 [release]: https://github.com/allure-framework/allure-teamcity/releases/latest "Latest release"
