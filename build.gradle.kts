@@ -25,8 +25,8 @@ tasks.wrapper {
 
 plugins {
     java
-    `java-library`
     signing
+    `java-library`
     id("com.diffplug.spotless") version "6.13.0"
     id("com.jfrog.bintray") version "1.8.5"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
