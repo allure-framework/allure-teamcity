@@ -1,7 +1,20 @@
-#Idea
-.idea
+#IDEA Files
+.idea/
+.idea/*
+!.idea/vcs.xml
+!.idea/icon.png
 *.iml
-out
+*.ipr
+bin
+
+#VSCode
+.vscode
+
+#Eclipse files
+*.settings
+*.classpath
+*.project
+*.pydevproject
 
 #Maven
 target
@@ -13,3 +26,6 @@ build
 # TeamCity
 downloads
 .teamcity
+
+#Mac OS stuff
+.DS_Store

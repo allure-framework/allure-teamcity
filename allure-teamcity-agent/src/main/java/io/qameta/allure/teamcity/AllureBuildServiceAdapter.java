@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2016-2023 Qameta Software OÜ
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package io.qameta.allure.teamcity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +26,7 @@ import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.agent.runner.SimpleProgramCommandLine;
 import jetbrains.buildServer.runner.JavaRunnerConstants;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,16 +63,22 @@ import static io.qameta.allure.teamcity.AllureConstants.RESULTS_DIRECTORY;
 import static io.qameta.allure.teamcity.utils.ZipUtils.listEntries;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.endsWith;
 
 /**
  * @author Dmitry Baev charlie@yandex-team.ru
  * Date: 06.08.15
  */
+@SuppressWarnings("PMD.GodClass")
 class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private static final String ARCHIVE_NAME = "allure-report.zip";
 
     private static final String ALLURE_EXEC_NAME = "allure";
+    private static final String TEAMCITY_BUILD_BRANCH = "teamcity.build.branch";
+    private static final String HISTORY = "history";
+    private static final String SUMMARY_JSON = "summary.json";
+    private static final String SLASH = "/";
 
     /**
      * Can be used to notify agent artifacts publisher about new artifacts to be
@@ -130,21 +152,21 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
     @Override
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
 
-        BuildProgressLogger buildLogger = getLogger();
+        final BuildProgressLogger buildLogger = getLogger();
 
-        Map<String, String> envVariables = new HashMap<>(getRunnerContext()
+        final Map<String, String> envVariables = new HashMap<>(getRunnerContext()
                 .getBuildParameters()
                 .getEnvironmentVariables());
         Optional.ofNullable(getRunnerContext().getRunnerParameters().get(JavaRunnerConstants.TARGET_JDK_HOME))
                 .ifPresent(javaHome -> envVariables.put("JAVA_HOME", javaHome));
 
-        String programPath = getProgramPath();
-        List<String> programArgs = getProgramArgs();
+        final String programPath = getProgramPath();
+        final List<String> programArgs = getProgramArgs();
 
-        buildLogger.message("Program environment variables: " + envVariables.toString());
+        buildLogger.message("Program environment variables: " + envVariables);
         buildLogger.message("Program working directory: " + workingDirectory);
         buildLogger.message("Program path: " + programPath);
-        buildLogger.message("Program args: " + programArgs.toString());
+        buildLogger.message("Program args: " + programArgs);
 
         return new SimpleProgramCommandLine(envVariables, workingDirectory, programPath, programArgs);
     }
@@ -165,46 +187,45 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private void publishAllureReport() throws IOException {
         if (publishMode.equals(AllurePublishMode.ARCHIVE)) {
-            Path reportArchive = getAgentTempDirectoryPath().resolve(ARCHIVE_NAME);
-            List<Path> reportFiles = Files.walk(reportDirectory)
+            final Path reportArchive = getAgentTempDirectoryPath().resolve(ARCHIVE_NAME);
+            final List<Path> reportFiles = Files.walk(reportDirectory)
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
             ZipUtils.zip(reportArchive, reportDirectory.getParent(), reportFiles);
             artifactsWatcher.addNewArtifactsPath(reportArchive.toString());
         }
         if (publishMode.equals(AllurePublishMode.PLAIN)) {
-            String reportDirectoryName = reportDirectory.toFile().getName();
-            artifactsWatcher.addNewArtifactsPath(String.format("%s => %s",
+            final String reportDirectoryName = reportDirectory.toFile().getName();
+            artifactsWatcher.addNewArtifactsPath(format("%s => %s",
                     reportDirectory.toString(),
                     reportDirectoryName));
         }
     }
 
     private void publishAllureHistory() throws IOException {
-        Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
+        final Path historyArchive = getAgentTempDirectoryPath().resolve("history.zip");
 
-        Path historyDirectory = reportDirectory.resolve("history");
-        List<Path> historyFiles = Files.walk(historyDirectory)
+        final Path historyDirectory = reportDirectory.resolve(HISTORY);
+        final List<Path> historyFiles = Files.walk(historyDirectory)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
         ZipUtils.zip(historyArchive, historyDirectory.getParent(), historyFiles);
-        artifactsWatcher.addNewArtifactsPath(historyArchive.toString() + " => " + ALLURE_ARTIFACT_META_LOCATION);
+        artifactsWatcher.addNewArtifactsPath(historyArchive + " => " + ALLURE_ARTIFACT_META_LOCATION);
     }
 
     private void publishAllureSummary() throws IOException {
-        Path summaryOutputPath = getAgentTempDirectoryPath().resolve("summary.json");
+        final Path summaryOutputPath = getAgentTempDirectoryPath().resolve(SUMMARY_JSON);
 
-        Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve("summary.json");
-        ObjectMapper mapper = new ObjectMapper();
+        final Path summaryWidgetPath = reportDirectory.resolve("widgets").resolve(SUMMARY_JSON);
+        final ObjectMapper mapper = new ObjectMapper();
 
-        AllureReportSummary summary = mapper.readValue(summaryWidgetPath.toFile(), AllureReportSummary.class);
+        final AllureReportSummary summary = mapper.readValue(summaryWidgetPath.toFile(), AllureReportSummary.class);
         summary.setUrl(getAllureReportUrl());
 
-        String json = mapper.writeValueAsString(summary);
-        Files.write(summaryOutputPath, json.getBytes());
+        final String json = mapper.writeValueAsString(summary);
+        Files.write(summaryOutputPath, json.getBytes(UTF_8));
 
-        artifactsWatcher.addNewArtifactsPath(summaryOutputPath + "=>"
-                + AllureConstants.ALLURE_ARTIFACT_META_LOCATION);
+        artifactsWatcher.addNewArtifactsPath(summaryOutputPath + "=>" + ALLURE_ARTIFACT_META_LOCATION);
     }
 
     private void clearReport() throws IOException {
@@ -226,34 +247,35 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         }
     }
 
-    private void copyHistoryFormLastFinishedBuild(URL url) throws IOException {
+    private void copyHistoryFormLastFinishedBuild(final URL url) throws IOException {
         getLogger().message(format("Search allure history information in [%s] ...", url.toString()));
-        Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
 
-        Path historyDirectory = resultsDirectory.resolve("history");
+        final Path historyDirectory = resultsDirectory.resolve(HISTORY);
         Files.createDirectories(historyDirectory);
 
         try (Stream<Path> dirList = Files.list(historyDirectory)) {
-            if (dirList.count() != 0) {
+            if (dirList.findAny().isPresent()) {
                 getLogger().message("Allure history information already exists ...");
                 return;
             }
         }
 
-        String password = getServerAuthentication();
-        String encoding = Base64.getUrlEncoder().encodeToString(password.getBytes("utf-8"));
+        final String password = getServerAuthentication();
+        final String encoding = Base64.getUrlEncoder().encodeToString(password.getBytes(UTF_8));
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("Authorization", "Basic " + encoding);
         connection.connect();
 
-        boolean isArtifactMissing = connection.getResponseCode() != 200;
+        final boolean isArtifactMissing = connection.getResponseCode() != 200;
         if (isArtifactMissing) {
-            getLogger().message(format("Allure history information missing in [%s] ...", url.toString()));
+            getLogger().message(format("Allure history information missing in [%s] ...", url));
             return;
         }
 
-        getLogger().message(format("Coping allure history information from [%s] ...", url.toString()));
+        getLogger().message(format("Coping allure history information from [%s] ...", url));
+
+        final Path lastFinishedArtifactZip = Files.createTempFile("artifact", String.valueOf(getBuild().getBuildId()));
         try (InputStream stream = connection.getInputStream()) {
             Files.copy(stream, lastFinishedArtifactZip, StandardCopyOption.REPLACE_EXISTING);
             try (ZipFile archive = new ZipFile(lastFinishedArtifactZip.toString())) {
@@ -262,8 +284,9 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         }
     }
 
-    private void copyHistoryToResultsPath(ZipFile archive, Path resultsDirectory) throws IOException {
-        for (final ZipEntry historyEntry : listEntries(archive, "history")) {
+    private void copyHistoryToResultsPath(final ZipFile archive,
+                                          final Path resultsDirectory) throws IOException {
+        for (final ZipEntry historyEntry : listEntries(archive, HISTORY)) {
             final String historyFile = historyEntry.getName();
 
             if (historyEntry.isDirectory()) {
@@ -280,12 +303,12 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      * Write the test executor info to results directory.
      */
     private void addExecutorInfo() throws IOException {
-        String rootUrl = getTeamcityBaseUrl();
-        String buildUrl = getBuildUrl();
-        String buildNumber = getBuildNumber();
-        String reportUrl = getAllureReportUrl();
+        final String rootUrl = getTeamcityBaseUrl();
+        final String buildUrl = getBuildUrl();
+        final String buildNumber = getBuildNumber();
+        final String reportUrl = getAllureReportUrl();
 
-        String buildName = format("%s / %s # %s",
+        final String buildName = format("%s / %s # %s",
                 getBuild().getProjectName(), getBuild().getBuildTypeName(), buildNumber);
         new AddExecutorInfo(rootUrl, buildName, buildUrl, buildNumber, reportUrl)
                 .invoke(resultsDirectory);
@@ -298,33 +321,38 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getLastFinishedArtifactUrl() {
-        StringBuilder artifactUrl = new StringBuilder();
+        final StringBuilder artifactUrl = new StringBuilder();
         artifactUrl.append(format(
                 "%srepository/downloadAll/%s/.lastFinished/artifacts.zip",
                 getTeamcityBaseUrl(),
                 getBuild().getBuildTypeExternalId()));
-        String branch = getConfigParameters().get("teamcity.build.branch");
+        final String branch = getConfigParameters().get(TEAMCITY_BUILD_BRANCH);
         if (Objects.nonNull(branch)) {
-            String encodedBranch = encodeValue(branch);
-            artifactUrl.append(format("?branch=%s", encodedBranch));
+            final String encodedBranch = encodeValue(branch);
+            artifactUrl.append(getBranchUrlParam(encodedBranch));
         }
         return artifactUrl.toString();
     }
 
-    private String getLastFinishedArtifactUrl(String name) {
+    private String getLastFinishedArtifactUrl(final String name) {
         return getArtifactUrl(".lastFinished", name);
     }
 
-    private String getArtifactUrl(String build, String name) {
-        StringBuilder artifactUrl = new StringBuilder();
+    private String getArtifactUrl(final String build, final String name) {
+        final StringBuilder artifactUrl = new StringBuilder();
         artifactUrl.append(format("%srepository/download/%s/%s/%s",
                 getTeamcityBaseUrl(), getBuild().getBuildTypeExternalId(), build, name));
-        String branch = getConfigParameters().get("teamcity.build.branch");
+        final String branch = getConfigParameters().get(TEAMCITY_BUILD_BRANCH);
         if (Objects.nonNull(branch)) {
-            String encodedBranch = encodeValue(branch);
-            artifactUrl.append(format("?branch=%s", encodedBranch));
+            final String encodedBranch = encodeValue(branch);
+            artifactUrl.append(getBranchUrlParam(encodedBranch));
         }
         return artifactUrl.toString();
+    }
+
+    @NotNull
+    private String getBranchUrlParam(final String encodedBranch) {
+        return format("?branch=%s", encodedBranch);
     }
 
     @NotNull
@@ -343,10 +371,10 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getAllureReportUrl() {
-        String reportDirectoryName = reportDirectory.toFile().getName();
-        String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
-                ? String.format("%s!/%s/index.html", ARCHIVE_NAME, reportDirectoryName)
-                : String.format("%s/index.html", reportDirectoryName);
+        final String reportDirectoryName = reportDirectory.toFile().getName();
+        final String artifactPath = publishMode.equals(AllurePublishMode.ARCHIVE)
+                ? format("%s!/%s/index.html", ARCHIVE_NAME, reportDirectoryName)
+                : format("%s/index.html", reportDirectoryName);
         return getArtifactUrl(format("%s:id", getBuild().getBuildId()), artifactPath);
     }
 
@@ -374,12 +402,14 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
      */
     @NotNull
     private String getTeamcityBaseUrl() {
-        String baseUrl = getConfigParameters().get("teamcity.serverUrl");
-        return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        final String baseUrl = getConfigParameters().get("teamcity.serverUrl");
+        return endsWith(baseUrl, SLASH)
+                ? baseUrl
+                : StringUtils.join(baseUrl, SLASH);
     }
 
     private List<String> getProgramArgs() {
-        List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<>();
 
         list.add("generate");
         list.add(resultsDirectory.toString());
@@ -391,27 +421,27 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
 
     private String getProgramPath() throws RunBuildException {
 
-        BuildProgressLogger buildLogger = getLogger();
-        String path = clientDirectory.toAbsolutePath().toString();
-        String executableName = getExecutableName();
 
-        String executableFile = path + File.separatorChar + "bin" + File.separatorChar + executableName;
-        File file = new File(executableFile);
+        final String path = clientDirectory.toAbsolutePath().toString();
+        final String executableName = getExecutableName();
+
+        final String executableFile = path + File.separatorChar + "bin" + File.separatorChar + executableName;
+        final File file = new File(executableFile);
 
         if (!file.exists()) {
             throw new RunBuildException("Cannot find executable \'" + executableFile + "\'");
         }
         if (!file.setExecutable(true)) {
-            buildLogger.message("Cannot set file: " + executableFile + " executable.");
+            getLogger().message("Cannot set file: " + executableFile + " executable.");
         }
         return file.getAbsolutePath();
 
     }
 
-    private static Path getClientDirectory(Path client) throws RunBuildException {
+    private static Path getClientDirectory(final Path client) throws RunBuildException {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(client, Files::isDirectory)) {
             for (Path path : stream) {
-                if (path.getFileName().toString().startsWith("allure")) {
+                if (path.getFileName().toString().startsWith(ALLURE_EXEC_NAME)) {
                     return path;
                 }
             }
@@ -436,7 +466,7 @@ class AllureBuildServiceAdapter extends BuildServiceAdapter {
         return getAgentTempDirectory().toPath();
     }
 
-    private String encodeValue(String value) {
+    private String encodeValue(final String value) {
         try {
             return URLEncoder.encode(value, UTF_8.toString());
         } catch (UnsupportedEncodingException ex) {

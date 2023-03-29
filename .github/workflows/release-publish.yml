@@ -15,7 +15,7 @@ jobs:
           java-version: '8'
           cache: 'gradle'
       - name: "Gradle Build"
-        run: ./gradlew installTeamcity2017 build -Pversion=${GITHUB_REF:10}
+        run: ./gradlew installTeamcity20202 build -Pversion=${GITHUB_REF:10}
       - name: "Gradle Publish to Jetbrains"
         env:
           JETBRAINS_TOKEN: ${{ secrets.JETBRAINS_TOKEN }}
