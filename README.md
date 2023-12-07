@@ -2,15 +2,13 @@
 [blog]: https://qameta.io/blog/ "Qameta Software"
 [twitter]: https://twitter.com/QametaSoftware "Qameta Software"
 [twitter-team]: https://twitter.com/QametaSoftware/lists/team/members "Team"
-[build]: https://ci.qameta.io/job/allure-teamcity/job/main "Build"
-[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-teamcity/main
 [release]: https://github.com/allure-framework/allure-teamcity/releases/latest "Latest release"
 [release-badge]: https://img.shields.io/github/release/allure-framework/allure-teamcity.svg?style=flat
 [CONTRIBUTING.md]: .github/CONTRIBUTING.md "Contributing"
 [CODE_OF_CONDUCT.md]: CODE_OF_CONDUCT.md "Code of conduct"
 [docs]: https://allurereport.org/docs/ "Allure Report Documentation"
 
-# Allure TeamCity integration [![build-badge][]][build] [![release-badge][]][release]
+# Allure TeamCity integration [![release-badge][]][release]
 
 Allure Framework is a flexible lightweight multi-language test report tool that not only 
 shows a very concise representation of what have been tested in a neat web report form, 
@@ -19,7 +17,7 @@ information from everyday execution of tests.
 
 ## Download 
 
-You can grab the latest version of Allure TeamCity from [bintray][bintray]. 
+You can grab the latest version of Allure TeamCity from [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/8988-allure). 
 
 ## Documentation 
 
