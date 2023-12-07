@@ -1,20 +1,16 @@
 [license]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License 2.0"
-[blog]: https://qameta.io/blog
-[gitter]: https://gitter.im/allure-framework/allure-core
-[gitter-ru]: https://gitter.im/allure-framework/allure-ru
+[blog]: https://qameta.io/blog/ "Qameta Software"
 [twitter]: https://twitter.com/QametaSoftware "Qameta Software"
 [twitter-team]: https://twitter.com/QametaSoftware/lists/team/members "Team"
 [build]: https://ci.qameta.io/job/allure-teamcity/job/main "Build"
 [build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-teamcity/main
-[bintray]: https://bintray.com/qameta/generic/allure-teamcity "Bintray"
-[bintray-badge]: https://img.shields.io/bintray/v/qameta/generic/allure-teamcity.svg?style=flat
 [release]: https://github.com/allure-framework/allure-teamcity/releases/latest "Latest release"
 [release-badge]: https://img.shields.io/github/release/allure-framework/allure-teamcity.svg?style=flat
-[CONTRIBUTING.md]: .github/CONTRIBUTING.md
-[CODE_OF_CONDUCT.md]: CODE_OF_CONDUCT.md
-[docs]: https://docs.qameta.io/allure/2.0/
+[CONTRIBUTING.md]: .github/CONTRIBUTING.md "Contributing"
+[CODE_OF_CONDUCT.md]: CODE_OF_CONDUCT.md "Code of conduct"
+[docs]: https://allurereport.org/docs/ "Allure Report Documentation"
 
-# Allure TeamCity integration [![build-badge][]][build] [![release-badge][]][release] [![bintray-badge][]][bintray]
+# Allure TeamCity integration [![build-badge][]][build] [![release-badge][]][release]
 
 Allure Framework is a flexible lightweight multi-language test report tool that not only 
 shows a very concise representation of what have been tested in a neat web report form, 
@@ -36,8 +32,7 @@ Please see [CONTRIBUTING.md][]
 ## Staying in Touch
 
 Follow [@QametaSoftware][twitter] and its [team members][twitter-team] on Twitter. In-depth articles can
-be found at [Qameta Blog][blog]. Also feel free to join our 
-[Gitter room][gitter] ([ru][gitter-ru]).
+be found at [Qameta Blog][blog]. 
 
 ## Code of Conduct
 
